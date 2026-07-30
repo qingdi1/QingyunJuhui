@@ -27,6 +27,8 @@ import {
   Copy,
   Download,
   Edit3,
+  Eye,
+  EyeOff,
   GripVertical,
   Info,
   ImagePlus,
@@ -82,6 +84,15 @@ import {
   type ModelWindowRow,
 } from "./model-windows";
 import { resolveProviderSyncCompletion } from "./provider-sync-flow";
+import {
+  QINGYUN_PROFILE_ID,
+  QINGYUN_SERVICE_URL,
+  findQingyunProfile,
+  isQingyunProfile,
+  mergeQingyunFetchedModels,
+  qingyunProfilePatch,
+  upsertQingyunProfile,
+} from "./qingyun-provider";
 import {
   defaultDreamSkinTheme,
   defaultDreamSkinColors,
@@ -2161,12 +2172,12 @@ export function App() {
   const switchRelayProfile = async (next: BackendSettings, previousActiveRelayId = settingsForm.activeRelayId) => {
     if (relaySwitching) {
       showNotice(t("供应商切换中"), t("上一次切换还没有完成，请稍后再试。"), "failed");
-      return;
+      return false;
     }
     let switchSettings = normalizeSettings(next);
     if (!switchSettings.relayProfilesEnabled) {
       showNotice(t("供应商配置已关闭"), t("当前不会写入 Codex config.toml / auth.json。打开供应商配置总开关后再切换。"), "failed");
-      return;
+      return false;
     }
     const targetBeforeSnapshot = activeRelayProfile(switchSettings);
     logDiagnostic("switchRelayProfile.start", {
@@ -2184,9 +2195,11 @@ export function App() {
         error: validationError,
       });
       showNotice(t("供应商配置可能不正确"), validationError, "failed");
-      return;
+      return false;
     }
-    switchSettings = await snapshotActiveRelayFilesBeforeSwitch(switchSettings, previousActiveRelayId);
+    if (previousActiveRelayId.trim() && previousActiveRelayId !== switchSettings.activeRelayId) {
+      switchSettings = await snapshotActiveRelayFilesBeforeSwitch(switchSettings, previousActiveRelayId);
+    }
     const selectedAfterSave = activeRelayProfile(switchSettings);
     const command = relayProfileSwitchCommand(selectedAfterSave);
 
@@ -2207,7 +2220,7 @@ export function App() {
         logDiagnostic("switchRelayProfile.apply_no_result", {
           targetRelayId: selectedAfterSave.id,
         });
-        return;
+        return false;
       }
       const selectedSettings = normalizeSettings(result.settings);
       setSettings({
@@ -2232,7 +2245,7 @@ export function App() {
           activeRelayId: selectedSettings.activeRelayId,
         });
         showNotice(t("供应商切换"), result.message, result.status);
-        return;
+        return false;
       }
       const currentSelected = activeRelayProfile(selectedSettings);
       logDiagnostic("switchRelayProfile.ok", {
@@ -2240,6 +2253,7 @@ export function App() {
         launchMode: selectedSettings.launchMode,
         status: result.status,
       });
+      return true;
     } finally {
       setRelaySwitching(false);
     }
@@ -2326,7 +2340,7 @@ export function App() {
         showLabel: "Show window",
         applySkinLabel: "Apply Dream Skin",
         quitLabel: "Quit",
-        windowTitle: "Qingyun Juhui Manager",
+        windowTitle: "Qingyun Juhui · Hub",
       });
     }
   }, []);
@@ -2614,6 +2628,11 @@ export function App() {
     [route, launchForm, settingsForm, settings, overview, removeOwnedData, update, updateInstallProgress.active, logs, diagnostics, theme, relayFiles, localSessions, zedRemoteProjects, selectedProviderSyncTarget, envConflicts, relayEnvironment, ccsProviders, dreamSkinLibrary, dreamSkinMarket, selectedDreamSkinTheme, savedDreamSkinThemeDraft, dreamSkinThemeDraft, dreamSkinDraftDirty, pendingDreamSkinRestart],
   );
   const hasUpdate = update?.updateAvailable === true;
+  const languageActionLabel = getLanguage() === "en" ? t("切换至中文") : t("切换至英文");
+  const themeActionLabel = theme === "dark" ? t("切换至明卷") : t("切换至夜卷");
+  const restartActionLabel = t("重启青云聚汇");
+  const refreshActionLabel = t("刷新本页数据");
+  const updateActionLabel = tf("发现新版本 {0}", [update?.latestVersion ?? ""]);
 
   return (
     <div className={`shell ${theme}`}>
@@ -2624,28 +2643,30 @@ export function App() {
             <div className="brand-title-row">
               <div className="brand-title">青云聚汇</div>
               {hasUpdate ? (
-                <button
-                  className="update-dot"
+                 <button
+                   aria-label={updateActionLabel}
+                   className="update-dot"
                   onClick={() => {
                     setRoute("about");
                     void checkUpdate(false);
                   }}
-                  title={tf("发现新版本 {0}", [update?.latestVersion ?? ""])}
+                   title={updateActionLabel}
                   type="button"
                 >
                   <CircleArrowUp className="h-4 w-4" aria-hidden="true" />
                 </button>
               ) : null}
             </div>
-            <div className="brand-subtitle">{t("管理控制台")}</div>
+            <div className="brand-subtitle">{t("中转与增强云台")}</div>
           </div>
         </div>
         <nav className="nav">
           {routes.map((item) => {
             const Icon = item.icon;
             return (
-            <button
-              className={`nav-item ${route === item.id ? "active" : ""}`}
+             <button
+               aria-label={item.label}
+               className={`nav-item ${route === item.id ? "active" : ""}`}
               key={item.id}
               onClick={() => void navigate(item.id)}
               title={item.label}
@@ -2664,34 +2685,55 @@ export function App() {
       <main className="workspace">
         <InkCursorTrail theme={theme} />
         <header className="topbar" key={`topbar-${route}`}>
-          <div>
+          <div className="topbar-copy">
             <h1>{routeTitle(route)}</h1>
             <p>{routeSubtitle(route)}</p>
           </div>
           <div className="topbar-actions">
             <Button
+              aria-label={languageActionLabel}
+              className="topbar-action"
               onClick={() => toggleLanguage()}
               size="icon"
-              title={getLanguage() === "en" ? t("切换到中文") : t("切换到英文")}
+              title={languageActionLabel}
               variant="outline"
             >
-              <Languages className="h-4 w-4" />
+              <Languages aria-hidden="true" className="h-4 w-4" />
             </Button>
             <Button
+              aria-label={themeActionLabel}
+              className="topbar-action"
               onClick={actions.toggleTheme}
               size="icon"
-              title={theme === "dark" ? t("切换到浅色") : t("切换到深色")}
+              title={themeActionLabel}
               variant="outline"
             >
-              {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+              {theme === "dark" ? (
+                <Sun aria-hidden="true" className="h-4 w-4" />
+              ) : (
+                <Moon aria-hidden="true" className="h-4 w-4" />
+              )}
             </Button>
-            <Button onClick={() => void actions.restart()} title={t("重启青云聚汇")} variant="outline">
-              <Rocket className="h-4 w-4" />
-              {t("重启青云聚汇")}
-            </Button>
-            <Button onClick={() => void actions.refreshCurrent()} size="icon" title={t("刷新当前页面")} variant="outline">
-              <RefreshCw className="h-4 w-4" />
-            </Button>
+             <Button
+               aria-label={refreshActionLabel}
+               className="topbar-action"
+               onClick={() => void actions.refreshCurrent()}
+               size="icon"
+               title={refreshActionLabel}
+               variant="outline"
+             >
+               <RefreshCw aria-hidden="true" className="h-4 w-4" />
+             </Button>
+             <Button
+               aria-label={restartActionLabel}
+               className="topbar-action topbar-action-restart"
+               onClick={() => void actions.restart()}
+               size="icon"
+               title={restartActionLabel}
+               variant="outline"
+             >
+               <RotateCcw aria-hidden="true" className="h-4 w-4" />
+             </Button>
           </div>
         </header>
         <section className="screen" key={route}>
@@ -2938,7 +2980,7 @@ type Actions = {
   diagnoseRelayProfile: (profile: RelayProfile) => Promise<ProviderDoctorResult | null>;
   testStepwiseSettings: (settings: BackendSettings) => Promise<void>;
   fetchRelayProfileModels: (profile: RelayProfile) => Promise<string[] | null>;
-  switchRelayProfile: (settings: BackendSettings, previousActiveRelayId?: string) => Promise<void>;
+  switchRelayProfile: (settings: BackendSettings, previousActiveRelayId?: string) => Promise<boolean>;
   relaySwitching: boolean;
   switchOfficialMode: () => Promise<void>;
   switchPureApiMode: () => Promise<void>;
@@ -3224,6 +3266,11 @@ function RelayScreen({
         <CardHead title={t("供应商列表")} detail={tf("{0} 个供应商配置；可拖动排序，点编辑进入详情", [normalized.relayProfiles.length])} />
         <CardContent>
           <EnvConflictNotice envConflicts={envConflicts} actions={actions} />
+          <QingyunQuickSetup
+            actions={actions}
+            form={normalized}
+            onEdit={(profileId) => void editRelayProfile(profileId)}
+          />
           <label className="switch-row relay-master-switch">
             <input
               checked={normalized.relayProfilesEnabled}
@@ -3299,6 +3346,222 @@ function RelayScreen({
         </CardContent>
       </Panel>
     </>
+  );
+}
+
+type QingyunSetupPhase = "idle" | "models" | "diagnosing" | "switching" | "success" | "failed";
+
+function QingyunQuickSetup({
+  form,
+  actions,
+  onEdit,
+}: {
+  form: BackendSettings;
+  actions: Actions;
+  onEdit: (profileId: string) => void;
+}) {
+  const existingProfile = findQingyunProfile(form.relayProfiles);
+  const [apiKey, setApiKey] = useState(existingProfile?.apiKey ?? "");
+  const [keyDirty, setKeyDirty] = useState(false);
+  const [showApiKey, setShowApiKey] = useState(false);
+  const [setupState, setSetupState] = useState<{ phase: QingyunSetupPhase; message: string }>({
+    phase: "idle",
+    message: "",
+  });
+  const inFlightRef = useRef(false);
+  const latestFormRef = useRef(form);
+  latestFormRef.current = form;
+  const running = setupState.phase === "models" || setupState.phase === "diagnosing" || setupState.phase === "switching";
+  const active = existingProfile?.id === form.activeRelayId;
+
+  useEffect(() => {
+    if (!keyDirty) setApiKey(existingProfile?.apiKey ?? "");
+  }, [existingProfile?.apiKey, existingProfile?.id, keyDirty]);
+
+  const connectQingyun = async () => {
+    if (inFlightRef.current) return;
+    const trimmedKey = apiKey.trim();
+    if (!trimmedKey) {
+      setSetupState({
+        phase: "failed",
+        message: t("请先输入青云聚汇 API Key，或前往官网获取密钥。"),
+      });
+      return;
+    }
+    inFlightRef.current = true;
+    try {
+      setSetupState({ phase: "models", message: t("正在验证密钥并自动获取可用模型…") });
+      const startingForm = latestFormRef.current;
+      const startingProfile = findQingyunProfile(startingForm.relayProfiles);
+      const seed = startingProfile ?? { ...createRelayProfile(startingForm), id: QINGYUN_PROFILE_ID };
+      let candidate = applyRelayProfilePatchToFiles(
+        seed,
+        qingyunProfilePatch(trimmedKey) as Partial<RelayProfile>,
+        { allowGenerateFiles: true },
+      );
+      const models = await actions.fetchRelayProfileModels(candidate);
+      if (!models?.length) {
+        setSetupState({
+          phase: "failed",
+          message: t("未能获取模型，请检查密钥是否有效后重试。密钥不会显示在提示或日志中。"),
+        });
+        return;
+      }
+
+      const merged = mergeQingyunFetchedModels(candidate, models);
+      candidate = applyRelayProfilePatchToFiles(candidate, {
+        model: merged.model,
+        testModel: merged.testModel,
+        modelList: merged.modelList,
+      });
+      setSetupState({
+        phase: "diagnosing",
+        message: tf("已获取 {0} 个模型，正在执行真实请求核验…", [models.length]),
+      });
+      const diagnosis = await actions.diagnoseRelayProfile(candidate);
+      const failedCheck = diagnosis?.checks.find((check) => check.status === "failed");
+      if (!diagnosis || !isSuccessStatus(diagnosis.status) || failedCheck) {
+        setSetupState({
+          phase: "failed",
+          message: diagnosis
+            ? [diagnosis.summary, failedCheck?.detail, diagnosis.recommendation].filter(Boolean).join(" ")
+            : t("供应商核验未完成，请检查网络后重试。"),
+        });
+        return;
+      }
+
+      setSetupState({ phase: "switching", message: t("核验通过，正在保存并设为当前供应商…") });
+      const latestForm = normalizeSettings(latestFormRef.current);
+      const next = normalizeSettings({
+        ...latestForm,
+        relayProfilesEnabled: true,
+        relayProfiles: upsertQingyunProfile(latestForm.relayProfiles, candidate),
+        activeRelayId: candidate.id,
+      });
+      const switched = await actions.switchRelayProfile(next, latestForm.activeRelayId);
+      if (!switched) {
+        setSetupState({
+          phase: "failed",
+          message: t("核验已通过，但写入 Codex 配置失败。请根据上方提示处理后重试。"),
+        });
+        return;
+      }
+
+      const warningCheck = diagnosis.checks.find((check) => check.status === "warning");
+      setKeyDirty(false);
+      setSetupState({
+        phase: "success",
+        message: [
+          tf("连接成功，已导入 {0} 个模型并设为当前供应商。", [models.length]),
+          warningCheck?.detail,
+        ].filter(Boolean).join(" "),
+      });
+    } catch {
+      setSetupState({
+        phase: "failed",
+        message: t("配置过程发生异常，请检查网络后重试。"),
+      });
+    } finally {
+      inFlightRef.current = false;
+    }
+  };
+
+  return (
+    <section className="qingyun-quick-setup" aria-labelledby="qingyun-quick-title">
+      <div className="qingyun-quick-head">
+        <div className="qingyun-quick-brand">
+          <span className="qingyun-quick-seal" aria-hidden="true">青</span>
+          <div>
+            <span className="qingyun-quick-kicker">{t("默认推荐供应商")}</span>
+            <h3 id="qingyun-quick-title">{t("青云聚汇")}</h3>
+            <p>{t("只需输入密钥，应用会自动获取模型、发起真实请求核验并完成配置。")}</p>
+          </div>
+        </div>
+        <div className="qingyun-quick-badges">
+          <span className="qingyun-recommended-badge">{t("首选")}</span>
+          {active ? <span className="qingyun-active-badge">{t("当前使用")}</span> : null}
+        </div>
+      </div>
+
+      <div className="qingyun-fixed-endpoint">
+        <ShieldCheck className="h-4 w-4" aria-hidden="true" />
+        <span>{t("固定服务接口")}</span>
+        <code>{QINGYUN_SERVICE_URL}</code>
+        <small>{t("OpenAI 兼容路径由应用自动配置，无需手动填写。")}</small>
+      </div>
+
+      <form
+        className="qingyun-key-form"
+        onSubmit={(event) => {
+          event.preventDefault();
+          if (!running && !actions.relaySwitching) void connectQingyun();
+        }}
+      >
+        <Label className="qingyun-key-label" htmlFor="qingyun-api-key">API Key</Label>
+        <div className="qingyun-key-input-wrap">
+          <KeyRound className="h-4 w-4" aria-hidden="true" />
+          <Input
+            autoComplete="off"
+            disabled={running}
+            id="qingyun-api-key"
+            onChange={(event) => {
+              setApiKey(event.currentTarget.value);
+              setKeyDirty(true);
+              if (setupState.phase === "failed" || setupState.phase === "success") {
+                setSetupState({ phase: "idle", message: "" });
+              }
+            }}
+            placeholder={t("输入从青云聚汇官网获取的 API Key")}
+            type={showApiKey ? "text" : "password"}
+            value={apiKey}
+          />
+          <button
+            aria-label={showApiKey ? t("隐藏密钥") : t("显示密钥")}
+            className="qingyun-key-visibility"
+            onClick={() => setShowApiKey((current) => !current)}
+            title={showApiKey ? t("隐藏密钥") : t("显示密钥")}
+            type="button"
+          >
+            {showApiKey ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+          </button>
+        </div>
+        <Button disabled={running || actions.relaySwitching || !apiKey.trim()} type="submit">
+          {running ? <RefreshCw className="h-4 w-4 qingyun-spin" /> : <Rocket className="h-4 w-4" />}
+          {setupState.phase === "models"
+            ? t("正在获取模型")
+            : setupState.phase === "diagnosing"
+              ? t("正在核验")
+              : setupState.phase === "switching"
+                ? t("正在启用")
+                : t("连接并自动配置")}
+        </Button>
+      </form>
+
+      <div className="qingyun-quick-footer">
+        <div className="qingyun-key-guide">
+          <span>{apiKey.trim() ? t("已输入密钥，可直接连接核验。") : t("还没有密钥？前往官网登录或注册后获取。")}</span>
+          <Button onClick={() => void actions.openExternalUrl(QINGYUN_SERVICE_URL)} size="sm" type="button" variant="secondary">
+            <ExternalLink className="h-4 w-4" />
+            {t("前往官网获取密钥")}
+          </Button>
+        </div>
+        {existingProfile ? (
+          <Button onClick={() => onEdit(existingProfile.id)} size="sm" type="button" variant="ghost">
+            <Settings className="h-4 w-4" />
+            {t("完整配置")}
+          </Button>
+        ) : null}
+      </div>
+
+      {setupState.message ? (
+        <div className={`qingyun-setup-status ${setupState.phase}`} role="status">
+          {setupState.phase === "success" ? <CheckCircle2 className="h-4 w-4" /> : null}
+          {setupState.phase === "failed" ? <ShieldAlert className="h-4 w-4" /> : null}
+          {running ? <RefreshCw className="h-4 w-4 qingyun-spin" /> : null}
+          <span>{setupState.message}</span>
+        </div>
+      ) : null}
+    </section>
   );
 }
 
@@ -5418,14 +5681,15 @@ function RelayProfileDetail({
   onSaved?: () => void;
   actions: Actions;
 }) {
-  const [draft, setDraft] = useState<RelayProfile>(profile);
+  const initialDraft = enforceManagedQingyunProfile(profile);
+  const [draft, setDraft] = useState<RelayProfile>(initialDraft);
   const [modelWindowRows, setModelWindowRows] = useState<ModelWindowRow[]>(
-    modelWindowRowsFromProfile(profile.modelList, profile.modelWindows || "", profile.modelVlm),
+    modelWindowRowsFromProfile(initialDraft.modelList, initialDraft.modelWindows || "", initialDraft.modelVlm),
   );
   const isActive = !isNew && profile.id === form.activeRelayId;
   const profileUsesLiveFiles = relayProfileUsesLiveFiles(profile);
   useEffect(() => {
-    const nextDraft = isAggregateRelayProfile(profile)
+    const derivedDraft = isAggregateRelayProfile(profile)
       ? normalizeAggregateRelayProfile(profile, form)
       : deriveRelayProfileFromFiles(
           isActive && profileUsesLiveFiles && relayFiles
@@ -5436,6 +5700,7 @@ function RelayProfileDetail({
             }
             : profile,
         );
+    const nextDraft = enforceManagedQingyunProfile(derivedDraft);
     setDraft(nextDraft);
     setModelWindowRows(modelWindowRowsFromProfile(nextDraft.modelList, nextDraft.modelWindows || "", nextDraft.modelVlm));
   }, [profile.id, profile.modelList, profile.modelWindows, profileUsesLiveFiles, isActive, isNew, relayFiles?.configContents, relayFiles?.authContents]);
@@ -5447,7 +5712,9 @@ function RelayProfileDetail({
   const saveDraft = async () => {
     if (validationError) return;
     const draftWithWindows = draftWithModelRows();
-    const normalizedDraft = isAggregateRelayProfile(draftWithWindows) ? normalizeAggregateRelayProfile(draftWithWindows, form) : deriveRelayProfileFromFiles(draftWithWindows);
+    const normalizedDraft = isAggregateRelayProfile(draftWithWindows)
+      ? normalizeAggregateRelayProfile(draftWithWindows, form)
+      : enforceManagedQingyunProfile(deriveRelayProfileFromFiles(draftWithWindows));
     const next = isNew
       ? addRelayProfile(form, normalizedDraft)
       : updateRelayProfile(form, profile.id, normalizedDraft);
@@ -5465,7 +5732,9 @@ function RelayProfileDetail({
   const switchDraft = () => {
     if (isNew || !form.relayProfilesEnabled) return;
     const draftWithWindows = draftWithModelRows();
-    const normalizedDraft = isAggregateRelayProfile(draftWithWindows) ? normalizeAggregateRelayProfile(draftWithWindows, form) : deriveRelayProfileFromFiles(draftWithWindows);
+    const normalizedDraft = isAggregateRelayProfile(draftWithWindows)
+      ? normalizeAggregateRelayProfile(draftWithWindows, form)
+      : enforceManagedQingyunProfile(deriveRelayProfileFromFiles(draftWithWindows));
     const previousActiveRelayId = form.activeRelayId;
     const next = syncLegacyRelayFields({
       ...form,
@@ -5559,6 +5828,7 @@ function RelayProfileEditor({
   const [doctorRunning, setDoctorRunning] = useState(false);
   // 纯 Responses 模式（非聚合）下 VLM/Strip 不生效，禁用下拉
   const vlmUnsupportedProtocol = profile.protocol === "responses" && !isAggregateRelayProfile(profile);
+  const managedQingyunProfile = isQingyunProfile(profile);
   if (isAggregateRelayProfile(profile)) {
     return (
       <AggregateRelayProfileEditor
@@ -5725,10 +5995,14 @@ function RelayProfileEditor({
           <div className="relay-api-fields">
             <Field className="relay-field-base-url" label="Base URL">
               <Input
+                disabled={managedQingyunProfile}
                 value={profile.baseUrl}
                 onChange={(event) => updateDraft({ baseUrl: event.currentTarget.value })}
                 placeholder={t("填写中转服务 Base URL")}
               />
+              {managedQingyunProfile ? (
+                <p className="field-hint">{t("青云聚汇使用固定服务接口，地址由应用托管。")}</p>
+              ) : null}
             </Field>
             <Field className="relay-field-key" label="Key">
               <Input
@@ -5742,6 +6016,7 @@ function RelayProfileEditor({
               <div className="protocol-options">
                 <button
                   className={`protocol-option ${profile.protocol === "responses" ? "active" : ""}`}
+                  disabled={managedQingyunProfile}
                   onClick={() => updateDraft({ protocol: "responses" })}
                   type="button"
                 >
@@ -5749,6 +6024,7 @@ function RelayProfileEditor({
                 </button>
                 <button
                   className={`protocol-option ${profile.protocol === "chatCompletions" ? "active" : ""}`}
+                  disabled={managedQingyunProfile}
                   onClick={() => updateDraft({ protocol: "chatCompletions" })}
                   type="button"
                 >
@@ -7911,6 +8187,18 @@ function relayProfileSwitchCommand(profile: RelayProfile): "clear_relay_injectio
   if (profile.relayMode === "official" && !profile.officialMixApiKey) return "clear_relay_injection";
   if (profile.configContents.trim()) return "apply_relay_injection";
   return profile.officialMixApiKey ? "apply_relay_injection" : "clear_relay_injection";
+}
+
+function enforceManagedQingyunProfile(profile: RelayProfile): RelayProfile {
+  if (isAggregateRelayProfile(profile) || !isQingyunProfile(profile)) return profile;
+  return applyRelayProfilePatchToFiles(
+    profile,
+    {
+      ...qingyunProfilePatch(profile.apiKey),
+      name: profile.name || t("青云聚汇"),
+    } as Partial<RelayProfile>,
+    { allowGenerateFiles: true },
+  );
 }
 
 function withGeneratedRelayFiles(profile: RelayProfile): RelayProfile {

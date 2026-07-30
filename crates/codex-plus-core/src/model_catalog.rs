@@ -490,6 +490,7 @@ async fn fetch_models_from_source(
 
     let mut request = client
         .get(&endpoint)
+        .timeout(std::time::Duration::from_secs(30))
         .header(reqwest::header::ACCEPT, "application/json");
     if !source.api_key.is_empty() {
         request = request.bearer_auth(&source.api_key);

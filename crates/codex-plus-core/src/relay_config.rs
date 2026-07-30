@@ -543,6 +543,7 @@ pub async fn test_relay_profile(
     let payload = relay_profile_test_payload(profile.protocol, test_model);
     let response = client
         .post(&endpoint)
+        .timeout(std::time::Duration::from_secs(30))
         .bearer_auth(api_key)
         .header(reqwest::header::CONTENT_TYPE, "application/json")
         .json(&payload)
@@ -561,6 +562,7 @@ pub async fn test_relay_profile(
         };
         let v1_response = client
             .post(&v1_endpoint)
+            .timeout(std::time::Duration::from_secs(30))
             .bearer_auth(api_key)
             .header(reqwest::header::CONTENT_TYPE, "application/json")
             .json(&payload)

@@ -5,6 +5,38 @@
 
 // Plain strings: t("中文") -> EN_PLAIN["中文"].
 export const EN_PLAIN: Record<string, string> = {
+  "OpenAI 兼容路径由应用自动配置，无需手动填写。":
+    "The app configures the OpenAI-compatible path automatically. No manual entry is needed.",
+  "供应商核验未完成，请检查网络后重试。": "Provider verification did not complete. Check your network and try again.",
+  "只需输入密钥，应用会自动获取模型、发起真实请求核验并完成配置。":
+    "Enter your API key and the app will fetch models, verify a real request, and finish setup automatically.",
+  "固定服务接口": "Fixed service endpoint",
+  "配置过程发生异常，请检查网络后重试。": "Setup failed unexpectedly. Check your network and try again.",
+  "完整配置": "Full settings",
+  "已输入密钥，可直接连接核验。": "API key entered. You can connect and verify now.",
+  "当前使用": "Active",
+  "正在启用": "Activating",
+  "正在核验": "Verifying",
+  "正在获取模型": "Fetching models",
+  "正在验证密钥并自动获取可用模型…": "Validating the API key and fetching available models…",
+  "核验已通过，但写入 Codex 配置失败。请根据上方提示处理后重试。":
+    "Verification passed, but writing the Codex configuration failed. Follow the notice above and try again.",
+  "核验通过，正在保存并设为当前供应商…": "Verification passed. Saving and activating the provider…",
+  "显示密钥": "Show API key",
+  "隐藏密钥": "Hide API key",
+  "还没有密钥？前往官网登录或注册后获取。": "No API key yet? Sign in or register on the official website to get one.",
+  "输入从青云聚汇官网获取的 API Key": "Enter the API key from the Qingyun Juhui website",
+  "连接并自动配置": "Connect and configure",
+  "未能获取模型，请检查密钥是否有效后重试。密钥不会显示在提示或日志中。":
+    "Models could not be fetched. Check the API key and try again. The key will not appear in notices or logs.",
+  "请先输入青云聚汇 API Key，或前往官网获取密钥。":
+    "Enter a Qingyun Juhui API key first, or visit the website to get one.",
+  "首选": "Preferred",
+  "前往官网获取密钥": "Get an API key",
+  "青云聚汇": "Qingyun Juhui",
+  "青云聚汇使用固定服务接口，地址由应用托管。":
+    "Qingyun Juhui uses a fixed service endpoint managed by the app.",
+  "默认推荐供应商": "Recommended default provider",
   "API Key 模式下扩展插件市场请求，尽量显示完整插件列表；官方/混合模式通常不需要。":
     "Expands plugin marketplace requests in API Key mode to show the full plugin list. Usually unnecessary in official/mixed mode.",
   "API Key 环境变量": "API Key environment variable",
@@ -305,10 +337,10 @@ export const EN_PLAIN: Record<string, string> = {
   "切换主题": "Toggle theme",
   "切换到此供应商时会写入 ~/.codex/auth.json": "Switching to this provider writes ~/.codex/auth.json",
   "切换到此供应商时会写入的预览；上下文开关变化会立即反映": "Preview of what gets written when switching to this provider; context toggles are reflected immediately",
-  "切换到中文": "Switch to Chinese",
-  "切换到英文": "Switch to English",
-  "切换到浅色": "Switch to light",
-  "切换到深色": "Switch to dark",
+  "切换至中文": "Switch to Chinese",
+  "切换至英文": "Switch to English",
+  "切换至明卷": "Switch to day scroll",
+  "切换至夜卷": "Switch to night scroll",
   "切换对话保留位置": "Preserve scroll position across threads",
   "点击建议后自动发送；关闭时只填入输入框。": "Automatically sends after clicking a suggestion. When off, it only fills the composer.",
   "刚刚启动": "Just launched",
@@ -324,7 +356,7 @@ export const EN_PLAIN: Record<string, string> = {
   "刷新会话": "Refresh sessions",
   "刷新列表": "Refresh list",
   "刷新市场": "Refresh marketplace",
-  "刷新当前页面": "Refresh current page",
+  "刷新本页数据": "Refresh this view",
   "刷新本地": "Refresh local",
   "刷新项目": "Refresh projects",
   "加入当前工作区": "Add to current workspace",
@@ -667,8 +699,8 @@ export const EN_PLAIN: Record<string, string> = {
   "管理 API 供应商、协议、Key 与配置文件": "Manage API providers, protocols, keys and config files",
   "管理 Codex SSH 项目并加入 Zed workspace": "Manage Codex SSH projects and add them to a Zed workspace",
   "管理工具入口": "Manager entrypoint",
-  "管理控制台": "Management console",
   "管理控制台入口": "Management console entrypoint",
+  "中转与增强云台": "Relay & enhancement hub",
   "类型": "Type",
   "粘贴修复": "Paste fix",
   "索引": "Index",
@@ -816,6 +848,9 @@ export const EN_PLAIN: Record<string, string> = {
 
 // Interpolated strings: tf("前缀 {0}", [x]) -> EN_TEMPLATE["前缀 {0}"] with {0} filled.
 export const EN_TEMPLATE: Record<string, string> = {
+  "已获取 {0} 个模型，正在执行真实请求核验…": "Fetched {0} models. Verifying with a real request…",
+  "连接成功，已导入 {0} 个模型并设为当前供应商。":
+    "Connected successfully. Imported {0} models and activated the provider.",
   "作者：{0} · {1}": "Author: {0} · {1}",
   "清单更新于 {0}，安装后会保存到“我的主题”。": "Manifest updated {0}. Installed themes are saved under My themes.",
   "，清理 {0} 条失效任务索引": ", pruned {0} stale task index entry/entries",

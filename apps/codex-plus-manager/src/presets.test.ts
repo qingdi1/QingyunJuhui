@@ -1,6 +1,7 @@
 import assert from "node:assert";
 import { describe, it } from "node:test";
 import { PRESETS } from "./presets.ts";
+import { QINGYUN_BASE_URL, QINGYUN_SERVICE_URL } from "./qingyun-provider.ts";
 
 describe("provider presets", () => {
   it("uses Qingyun Juhui instead of the legacy JOJO presets", () => {
@@ -9,10 +10,10 @@ describe("provider presets", () => {
     assert.deepStrictEqual(preset, {
       id: "qingyun-juhui",
       name: "青云聚汇中转站",
-      websiteUrl: "https://api.qinggekeji.top",
-      apiKeyUrl: "https://api.qinggekeji.top",
+      websiteUrl: QINGYUN_SERVICE_URL,
+      apiKeyUrl: QINGYUN_SERVICE_URL,
       category: "aggregator",
-      baseUrl: "https://api.qinggekeji.top/v1",
+      baseUrl: QINGYUN_BASE_URL,
       protocol: "responses",
       model: "gpt-5.5",
     });
