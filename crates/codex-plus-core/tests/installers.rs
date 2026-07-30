@@ -8,24 +8,20 @@ use codex_plus_core::install::{
 fn windows_entrypoint_plan_contains_silent_and_manager_entrypoints() {
     let options = InstallOptions {
         install_root: Some("C:/Users/A/Desktop".into()),
-        launcher_path: Some("C:/Tools/codex-plus-plus.exe".into()),
-        manager_path: Some("C:/Tools/codex-plus-plus-manager.exe".into()),
+        launcher_path: Some("C:/Tools/qingyun-juhui.exe".into()),
+        manager_path: Some("C:/Tools/qingyun-juhui-manager.exe".into()),
         remove_owned_data: false,
     };
 
     let plan = build_windows_entrypoint_plan(&options);
 
-    assert!(plan.silent_shortcut.ends_with("Codex++.lnk"));
-    assert!(plan.manager_shortcut.ends_with("Codex++ 管理工具.lnk"));
-    assert_eq!(plan.launcher_path, "C:/Tools/codex-plus-plus.exe");
-    assert_eq!(plan.manager_path, "C:/Tools/codex-plus-plus-manager.exe");
-    assert_eq!(plan.silent_icon_path, "C:/Tools/codex-plus-plus.exe");
-    assert_eq!(
-        plan.manager_icon_path,
-        "C:/Tools/codex-plus-plus-manager.exe"
-    );
-    assert_eq!(plan.uninstall_key, "CodexPlusPlus");
-    assert_eq!(plan.legacy_uninstall_key, "Codex++");
+    assert!(plan.silent_shortcut.ends_with("青云聚汇.lnk"));
+    assert!(plan.manager_shortcut.ends_with("青云聚汇管理工具.lnk"));
+    assert_eq!(plan.launcher_path, "C:/Tools/qingyun-juhui.exe");
+    assert_eq!(plan.manager_path, "C:/Tools/qingyun-juhui-manager.exe");
+    assert_eq!(plan.silent_icon_path, "C:/Tools/qingyun-juhui.exe");
+    assert_eq!(plan.manager_icon_path, "C:/Tools/qingyun-juhui-manager.exe");
+    assert_eq!(plan.uninstall_key, "QingyunJuhui");
     assert_eq!(
         plan.uninstaller_path.replace('\\', "/"),
         "C:/Tools/uninstall.exe"
@@ -40,7 +36,7 @@ fn windows_entrypoint_plan_contains_silent_and_manager_entrypoints() {
     );
     assert_ne!(
         plan.uninstall_command,
-        "\"C:/Tools/codex-plus-plus-manager.exe\""
+        "\"C:/Tools/qingyun-juhui-manager.exe\""
     );
 }
 
@@ -55,8 +51,8 @@ fn windows_entrypoint_plan_can_request_owned_data_removal_without_shell_script()
 
     let plan = build_windows_entrypoint_plan(&options);
 
-    assert!(plan.silent_shortcut.ends_with("Codex++.lnk"));
-    assert!(plan.manager_shortcut.ends_with("Codex++ 管理工具.lnk"));
+    assert!(plan.silent_shortcut.ends_with("青云聚汇.lnk"));
+    assert!(plan.manager_shortcut.ends_with("青云聚汇管理工具.lnk"));
     assert!(plan.remove_owned_data);
 }
 
@@ -64,42 +60,35 @@ fn windows_entrypoint_plan_can_request_owned_data_removal_without_shell_script()
 fn macos_bundle_metadata_contains_silent_and_manager_apps() {
     let options = InstallOptions {
         install_root: Some("/Applications".into()),
-        launcher_path: Some("/opt/Codex++/codex-plus-plus".into()),
-        manager_path: Some("/opt/Codex++/codex-plus-plus-manager".into()),
+        launcher_path: Some("/opt/青云聚汇/qingyun-juhui".into()),
+        manager_path: Some("/opt/青云聚汇/qingyun-juhui-manager".into()),
         remove_owned_data: false,
     };
 
     let silent = build_macos_app_bundle(&options, false);
     let manager = build_macos_app_bundle(&options, true);
 
-    assert!(silent.app_path.ends_with("Codex++.app"));
-    assert!(manager.app_path.ends_with("Codex++ 管理工具.app"));
-    assert!(silent.info_plist.contains("<string>Codex++</string>"));
+    assert!(silent.app_path.ends_with("青云聚汇.app"));
+    assert!(manager.app_path.ends_with("青云聚汇管理工具.app"));
+    assert!(silent.info_plist.contains("<string>青云聚汇</string>"));
     assert!(
         manager
             .info_plist
-            .contains("<string>Codex++ 管理工具</string>")
+            .contains("<string>青云聚汇管理工具</string>")
     );
-    assert_eq!(
-        silent.binary_target_name.as_deref(),
-        Some("codex-plus-plus")
-    );
+    assert_eq!(silent.binary_target_name.as_deref(), Some("qingyun-juhui"));
     assert_eq!(
         manager.binary_target_name.as_deref(),
-        Some("codex-plus-plus-manager")
+        Some("qingyun-juhui-manager")
     );
-    assert!(silent.launch_script.contains("$DIR/codex-plus-plus"));
-    assert!(
-        manager
-            .launch_script
-            .contains("$DIR/codex-plus-plus-manager")
-    );
+    assert!(silent.launch_script.contains("$DIR/qingyun-juhui"));
+    assert!(manager.launch_script.contains("$DIR/qingyun-juhui-manager"));
 }
 
 #[test]
 fn installer_exports_expected_two_entrypoint_names() {
-    assert_eq!(shortcut_names(), ("Codex++.lnk", "Codex++ 管理工具.lnk"));
-    assert_eq!(app_bundle_names(), ("Codex++.app", "Codex++ 管理工具.app"));
+    assert_eq!(shortcut_names(), ("青云聚汇.lnk", "青云聚汇管理工具.lnk"));
+    assert_eq!(app_bundle_names(), ("青云聚汇.app", "青云聚汇管理工具.app"));
 }
 
 #[test]
@@ -113,26 +102,24 @@ fn macos_dmg_includes_applications_shortcut_for_drag_install() {
 #[test]
 fn companion_binary_path_resolves_macos_silent_app_next_to_manager_app() {
     let manager_exe = std::path::Path::new(
-        "/Applications/Codex++ 管理工具.app/Contents/MacOS/CodexPlusPlusManager",
+        "/Applications/青云聚汇管理工具.app/Contents/MacOS/QingyunJuhuiManager",
     );
 
     let companion = companion_binary_path_from_exe(manager_exe, SILENT_BINARY);
 
     assert_eq!(
         companion,
-        std::path::PathBuf::from("/Applications/Codex++.app/Contents/MacOS/CodexPlusPlus")
+        std::path::PathBuf::from("/Applications/青云聚汇.app/Contents/MacOS/QingyunJuhui")
     );
     assert_ne!(
         companion,
-        std::path::PathBuf::from(
-            "/Applications/Codex++ 管理工具.app/Contents/MacOS/codex-plus-plus"
-        )
+        std::path::PathBuf::from("/Applications/青云聚汇管理工具.app/Contents/MacOS/qingyun-juhui")
     );
 }
 
 #[test]
 fn companion_binary_path_resolves_macos_manager_app_next_to_silent_app() {
-    let silent_exe = std::path::Path::new("/Applications/Codex++.app/Contents/MacOS/CodexPlusPlus");
+    let silent_exe = std::path::Path::new("/Applications/青云聚汇.app/Contents/MacOS/QingyunJuhui");
 
     let companion =
         companion_binary_path_from_exe(silent_exe, codex_plus_core::install::MANAGER_BINARY);
@@ -140,7 +127,7 @@ fn companion_binary_path_resolves_macos_manager_app_next_to_silent_app() {
     assert_eq!(
         companion,
         std::path::PathBuf::from(
-            "/Applications/Codex++ 管理工具.app/Contents/MacOS/CodexPlusPlusManager"
+            "/Applications/青云聚汇管理工具.app/Contents/MacOS/QingyunJuhuiManager"
         )
     );
 }
@@ -148,10 +135,10 @@ fn companion_binary_path_resolves_macos_manager_app_next_to_silent_app() {
 #[test]
 fn macos_companion_launch_uses_bundle_ids_from_app_translocation() {
     let manager_exe = std::path::Path::new(
-        "/private/var/folders/x/AppTranslocation/manager-id/d/Codex++ 管理工具.app/Contents/MacOS/CodexPlusPlusManager",
+        "/private/var/folders/x/AppTranslocation/manager-id/d/青云聚汇管理工具.app/Contents/MacOS/QingyunJuhuiManager",
     );
     let silent_exe = std::path::Path::new(
-        "/private/var/folders/x/AppTranslocation/silent-id/d/Codex++.app/Contents/MacOS/CodexPlusPlus",
+        "/private/var/folders/x/AppTranslocation/silent-id/d/青云聚汇.app/Contents/MacOS/QingyunJuhui",
     );
 
     assert_eq!(
@@ -169,7 +156,7 @@ fn macos_companion_launch_uses_bundle_ids_from_app_translocation() {
 
 #[test]
 fn macos_companion_launch_keeps_bare_binary_development_mode() {
-    let manager_exe = std::path::Path::new("/tmp/target/debug/codex-plus-plus-manager");
+    let manager_exe = std::path::Path::new("/tmp/target/debug/qingyun-juhui-manager");
 
     assert_eq!(
         macos_companion_bundle_identifier_from_exe(manager_exe, SILENT_BINARY),
@@ -181,9 +168,9 @@ fn macos_companion_launch_keeps_bare_binary_development_mode() {
 fn macos_bundle_does_not_wrap_the_bundle_executable_in_itself() {
     let options = InstallOptions {
         install_root: Some("/Applications".into()),
-        launcher_path: Some("/Applications/Codex++.app/Contents/MacOS/CodexPlusPlus".into()),
+        launcher_path: Some("/Applications/青云聚汇.app/Contents/MacOS/QingyunJuhui".into()),
         manager_path: Some(
-            "/Applications/Codex++ 管理工具.app/Contents/MacOS/CodexPlusPlusManager".into(),
+            "/Applications/青云聚汇管理工具.app/Contents/MacOS/QingyunJuhuiManager".into(),
         ),
         remove_owned_data: false,
     };
@@ -194,21 +181,17 @@ fn macos_bundle_does_not_wrap_the_bundle_executable_in_itself() {
     assert_eq!(
         silent.binary_source,
         Some(std::path::PathBuf::from(
-            "/Applications/Codex++.app/Contents/MacOS/CodexPlusPlus"
+            "/Applications/青云聚汇.app/Contents/MacOS/QingyunJuhui"
         ))
     );
     assert_eq!(
         manager.binary_source,
         Some(std::path::PathBuf::from(
-            "/Applications/Codex++ 管理工具.app/Contents/MacOS/CodexPlusPlusManager"
+            "/Applications/青云聚汇管理工具.app/Contents/MacOS/QingyunJuhuiManager"
         ))
     );
-    assert!(silent.launch_script.contains("$DIR/codex-plus-plus"));
-    assert!(
-        manager
-            .launch_script
-            .contains("$DIR/codex-plus-plus-manager")
-    );
+    assert!(silent.launch_script.contains("$DIR/qingyun-juhui"));
+    assert!(manager.launch_script.contains("$DIR/qingyun-juhui-manager"));
 }
 
 #[test]

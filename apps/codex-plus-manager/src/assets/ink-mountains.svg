@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" fill="none">
+  <defs>
+    <filter id="paper" x="-10%" y="-10%" width="120%" height="120%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.72" numOctaves="4" seed="29" result="grain"/>
+      <feColorMatrix in="grain" type="saturate" values="0" result="mono"/>
+      <feComponentTransfer in="mono">
+        <feFuncA type="table" tableValues="0 0.2"/>
+      </feComponentTransfer>
+    </filter>
+    <filter id="wash" x="-12%" y="-20%" width="124%" height="145%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.012 0.035" numOctaves="2" seed="13" result="noise"/>
+      <feDisplacementMap in="SourceGraphic" in2="noise" scale="24" xChannelSelector="R" yChannelSelector="B"/>
+      <feGaussianBlur stdDeviation="2.4"/>
+    </filter>
+    <linearGradient id="mist" x1="800" y1="320" x2="800" y2="900" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#8E7C5F" stop-opacity="0"/>
+      <stop offset="1" stop-color="#5A4C38" stop-opacity="0.4"/>
+    </linearGradient>
+  </defs>
+  <rect width="1600" height="900" fill="#A28C67" opacity="0.22" filter="url(#paper)"/>
+  <g filter="url(#wash)">
+    <path d="M0 749C132 690 211 622 322 638C417 651 471 729 568 699C663 670 696 570 806 570C921 571 978 691 1087 675C1199 658 1269 515 1382 522C1465 528 1528 597 1600 640V900H0V749Z" fill="#3D382E" opacity="0.27"/>
+    <path d="M0 806C175 758 278 710 410 727C517 741 579 810 688 790C817 766 883 654 1017 678C1121 697 1196 782 1310 751C1411 724 1490 666 1600 687V900H0V806Z" fill="#27383A" opacity="0.25"/>
+    <path d="M713 702C769 619 807 536 844 394C891 493 918 585 963 708H713Z" fill="#40392C" opacity="0.19"/>
+    <path d="M989 708C1046 608 1081 501 1113 331C1174 488 1200 613 1245 719L989 708Z" fill="#2D3533" opacity="0.17"/>
+    <path d="M1207 712C1253 632 1281 559 1307 443C1358 563 1387 636 1428 735L1207 712Z" fill="#493D2D" opacity="0.15"/>
+  </g>
+  <path d="M0 642C215 596 395 632 561 621C739 609 847 554 1010 573C1203 595 1359 649 1600 585V900H0V642Z" fill="url(#mist)" opacity="0.18"/>
+  <g stroke="#3A352B" stroke-linecap="round" opacity="0.24">
+    <path d="M1370 533C1394 467 1426 418 1467 376" stroke-width="7"/>
+    <path d="M1430 427C1410 392 1403 361 1408 326" stroke-width="4"/>
+    <path d="M1437 413C1472 397 1501 374 1521 343" stroke-width="4"/>
+    <path d="M1390 484C1364 463 1349 439 1344 411" stroke-width="3"/>
+  </g>
+  <g fill="#345054" opacity="0.2">
+    <ellipse cx="1405" cy="340" rx="31" ry="7" transform="rotate(-24 1405 340)"/>
+    <ellipse cx="1448" cy="383" rx="34" ry="7" transform="rotate(-16 1448 383)"/>
+    <ellipse cx="1504" cy="351" rx="27" ry="6" transform="rotate(-34 1504 351)"/>
+    <ellipse cx="1360" cy="425" rx="26" ry="6" transform="rotate(28 1360 425)"/>
+  </g>
+</svg>

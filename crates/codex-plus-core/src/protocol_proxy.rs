@@ -12,10 +12,18 @@ use serde_json::{Value, json};
 use crate::relay_rotation::{RotationContext, RotationEvent};
 use crate::settings::{RelayProtocol, SettingsStore};
 
-pub const DEFAULT_PROTOCOL_PROXY_PORT: u16 = 57321;
+pub const DEFAULT_PROTOCOL_PROXY_PORT: u16 = 58321;
+pub const LEGACY_PROTOCOL_PROXY_PORTS: &[u16] = &[57321];
 const UPSTREAM_CONNECT_TIMEOUT: Duration = Duration::from_secs(5);
 const UPSTREAM_HEADER_TIMEOUT: Duration = Duration::from_secs(30);
 const UPSTREAM_STREAM_HEADER_TIMEOUT: Duration = Duration::from_secs(120);
+
+pub fn is_managed_local_responses_proxy_base_url(value: &str) -> bool {
+    let normalized = value.trim().trim_end_matches('/');
+    std::iter::once(DEFAULT_PROTOCOL_PROXY_PORT)
+        .chain(LEGACY_PROTOCOL_PROXY_PORTS.iter().copied())
+        .any(|port| local_responses_proxy_base_url(port) == normalized)
+}
 const THINK_OPEN_TAG: &str = "<think>";
 const THINK_CLOSE_TAG: &str = "</think>";
 const EXTRA_CHAT_PASSTHROUGH_FIELDS: &[&str] = &[

@@ -50,7 +50,7 @@ pub fn run() {
             };
             let mut main_window_builder =
                 tauri::WebviewWindowBuilder::new(app, "main", tauri::WebviewUrl::App(url.into()))
-                    .title("Codex++ 管理工具")
+                    .title("青云聚汇管理工具")
                     .inner_size(1180.0, 820.0)
                     .min_inner_size(960.0, 720.0);
             if let Some(icon) = app.default_window_icon().cloned() {
@@ -99,7 +99,6 @@ pub fn run() {
             commands::preview_session_index_cleanup,
             commands::apply_session_index_cleanup,
             commands::sync_providers_now,
-            commands::load_ads,
             commands::refresh_script_market,
             commands::install_market_script,
             commands::set_user_script_enabled,
@@ -335,7 +334,7 @@ pub fn focus_existing_manager_window() {
             }
             if process
                 .exe_file
-                .eq_ignore_ascii_case("codex-plus-plus-manager.exe")
+                .eq_ignore_ascii_case("qingyun-juhui-manager.exe")
             {
                 let _ = codex_plus_core::windows_activate_process_window(process.process_id);
                 break;

@@ -1,8 +1,18 @@
 use codex_plus_core::update::{
-    Release, download_asset_to, is_newer_version, parse_version_tag, release_from_github_payload,
-    release_from_latest_json_payload, safe_asset_name, select_update_asset,
+    DEFAULT_LATEST_JSON_URL, DEFAULT_REPOSITORY, Release, download_asset_to, is_newer_version,
+    parse_version_tag, release_from_github_payload, release_from_latest_json_payload,
+    safe_asset_name, select_update_asset,
 };
 use serde_json::json;
+
+#[test]
+fn default_update_source_is_qingyun_juhui_repository() {
+    assert_eq!(DEFAULT_REPOSITORY, "qingdi1/QingyunJuhui");
+    assert_eq!(
+        DEFAULT_LATEST_JSON_URL,
+        "https://github.com/qingdi1/QingyunJuhui/releases/latest/download/latest.json"
+    );
+}
 
 #[test]
 fn parse_version_tag_accepts_prefix_and_suffix() {
@@ -26,9 +36,9 @@ fn github_payload_selects_platform_installer() {
         "body": "fixes",
         "assets": [
             {"name": "source.zip", "browser_download_url": "https://example.test/source.zip"},
-            {"name": "codex-plus-plus-manager.exe", "browser_download_url": "https://example.test/manager.exe"},
-            {"name": "CodexPlusPlus_1.0.9_x64-setup.exe", "browser_download_url": "https://example.test/setup.exe"},
-            {"name": "CodexPlusPlus_1.0.9_x64.dmg", "browser_download_url": "https://example.test/app.dmg"}
+            {"name": "qingyun-juhui-manager.exe", "browser_download_url": "https://example.test/manager.exe"},
+            {"name": "QingyunJuhui_1.0.9_x64-setup.exe", "browser_download_url": "https://example.test/setup.exe"},
+            {"name": "QingyunJuhui_1.0.9_x64.dmg", "browser_download_url": "https://example.test/app.dmg"}
         ]
     }))
     .unwrap();
@@ -37,12 +47,12 @@ fn github_payload_selects_platform_installer() {
     if cfg!(windows) {
         assert_eq!(
             release.asset_name.as_deref(),
-            Some("CodexPlusPlus_1.0.9_x64-setup.exe")
+            Some("QingyunJuhui_1.0.9_x64-setup.exe")
         );
     } else if cfg!(target_os = "macos") {
         assert_eq!(
             release.asset_name.as_deref(),
-            Some("CodexPlusPlus_1.0.9_x64.dmg")
+            Some("QingyunJuhui_1.0.9_x64.dmg")
         );
     } else {
         assert_eq!(release.asset_name.as_deref(), None);
@@ -57,8 +67,8 @@ fn latest_json_payload_selects_platform_installer_without_github_api_shape() {
         "body": "静态更新描述",
         "assets": [
             {"name": "source.zip", "url": "https://example.test/source.zip"},
-            {"name": "CodexPlusPlus-1.1.6-windows-x64-setup.exe", "url": "https://example.test/setup.exe"},
-            {"name": "CodexPlusPlus-1.1.6-macos-x64.dmg", "url": "https://example.test/app.dmg"}
+            {"name": "QingyunJuhui-1.1.6-windows-x64-setup.exe", "url": "https://example.test/setup.exe"},
+            {"name": "QingyunJuhui-1.1.6-macos-x64.dmg", "url": "https://example.test/app.dmg"}
         ]
     }))
     .unwrap();
@@ -68,12 +78,12 @@ fn latest_json_payload_selects_platform_installer_without_github_api_shape() {
     if cfg!(windows) {
         assert_eq!(
             release.asset_name.as_deref(),
-            Some("CodexPlusPlus-1.1.6-windows-x64-setup.exe")
+            Some("QingyunJuhui-1.1.6-windows-x64-setup.exe")
         );
     } else if cfg!(target_os = "macos") {
         assert_eq!(
             release.asset_name.as_deref(),
-            Some("CodexPlusPlus-1.1.6-macos-x64.dmg")
+            Some("QingyunJuhui-1.1.6-macos-x64.dmg")
         );
     } else {
         assert_eq!(release.asset_name.as_deref(), None);
@@ -84,29 +94,29 @@ fn latest_json_payload_selects_platform_installer_without_github_api_shape() {
 fn asset_selection_prefers_current_platform_artifacts() {
     let assets = vec![
         (
-            "CodexPlusPlus.zip".to_string(),
+            "QingyunJuhui.zip".to_string(),
             "https://example.test/source.zip".to_string(),
         ),
         (
-            "codex-plus-plus-manager.exe".to_string(),
+            "qingyun-juhui-manager.exe".to_string(),
             "https://example.test/manager.exe".to_string(),
         ),
         (
-            "CodexPlusPlus_1.0.9_x64-setup.exe".to_string(),
+            "QingyunJuhui_1.0.9_x64-setup.exe".to_string(),
             "https://example.test/setup.exe".to_string(),
         ),
         (
-            "CodexPlusPlus_1.0.9_x64.dmg".to_string(),
+            "QingyunJuhui_1.0.9_x64.dmg".to_string(),
             "https://example.test/app.dmg".to_string(),
         ),
     ];
 
     if cfg!(windows) {
         let selected = select_update_asset(&assets).unwrap();
-        assert_eq!(selected.name, "CodexPlusPlus_1.0.9_x64-setup.exe");
+        assert_eq!(selected.name, "QingyunJuhui_1.0.9_x64-setup.exe");
     } else if cfg!(target_os = "macos") {
         let selected = select_update_asset(&assets).unwrap();
-        assert_eq!(selected.name, "CodexPlusPlus_1.0.9_x64.dmg");
+        assert_eq!(selected.name, "QingyunJuhui_1.0.9_x64.dmg");
     } else {
         assert!(select_update_asset(&assets).is_none());
     }
@@ -119,11 +129,11 @@ fn asset_selection_distinguishes_x64_and_arm64_macos_dmgs() {
     // not check the arch token in the filename.
     let assets = vec![
         (
-            "CodexPlusPlus-1.2.17-macos-arm64.dmg".to_string(),
+            "QingyunJuhui-1.2.17-macos-arm64.dmg".to_string(),
             "https://example.test/app-arm64.dmg".to_string(),
         ),
         (
-            "CodexPlusPlus-1.2.17-macos-x64.dmg".to_string(),
+            "QingyunJuhui-1.2.17-macos-x64.dmg".to_string(),
             "https://example.test/app-x64.dmg".to_string(),
         ),
     ];
@@ -132,8 +142,8 @@ fn asset_selection_distinguishes_x64_and_arm64_macos_dmgs() {
         let selected = select_update_asset(&assets)
             .expect("a macOS DMG should be selected for the running arch");
         let expected = match std::env::consts::ARCH {
-            "x86_64" => "CodexPlusPlus-1.2.17-macos-x64.dmg",
-            "aarch64" => "CodexPlusPlus-1.2.17-macos-arm64.dmg",
+            "x86_64" => "QingyunJuhui-1.2.17-macos-x64.dmg",
+            "aarch64" => "QingyunJuhui-1.2.17-macos-arm64.dmg",
             other => panic!("unexpected target arch in test: {other}"),
         };
         assert_eq!(

@@ -1,7 +1,7 @@
-# Codex++
+# 青云聚汇
 
 <p align="center">
-  <img src="docs/images/codex-plus-plus.png" alt="Codex++ 图标" width="160">
+  <img src="docs/images/codex-plus-plus.png" alt="青云聚汇图标" width="160">
 </p>
 
 <p align="center">
@@ -9,40 +9,40 @@
 </p>
 
 <p align="center">
-  <img alt="Release" src="https://img.shields.io/github/v/release/BigPizzaV3/CodexPlusPlus">
-  <img alt="Stars" src="https://img.shields.io/github/stars/BigPizzaV3/CodexPlusPlus">
-  <img alt="License" src="https://img.shields.io/github/license/BigPizzaV3/CodexPlusPlus">
+  <img alt="Release" src="https://img.shields.io/github/v/release/qingdi1/QingyunJuhui">
+  <img alt="Stars" src="https://img.shields.io/github/stars/qingdi1/QingyunJuhui">
+  <img alt="License" src="https://img.shields.io/github/license/qingdi1/QingyunJuhui">
   <img alt="Rust" src="https://img.shields.io/badge/rust-1.85%2B-orange">
   <img alt="Tauri" src="https://img.shields.io/badge/tauri-2.x-24C8DB">
 </p>
 
-Codex++ 是面向 OpenAI Codex / ChatGPT 桌面应用的外部启动器与管理工具。它通过 Chromium DevTools Protocol 和本地辅助服务提供供应商切换、协议转换、会话管理与界面增强，不修改官方应用的 `app.asar`，也不向安装目录写入补丁文件。
+青云聚汇是基于 CodexPlusPlus 二次开发的 OpenAI Codex / ChatGPT 桌面应用外部启动器与管理工具。它通过 Chromium DevTools Protocol 和本地辅助服务提供供应商切换、协议转换、会话管理与界面增强，不修改官方应用的 `app.asar`，也不向安装目录写入补丁文件。
 
 ## 快速使用
 
-从 [GitHub Releases](https://github.com/BigPizzaV3/CodexPlusPlus/releases) 下载最新版安装包：
+从 [GitHub Releases](https://github.com/qingdi1/QingyunJuhui/releases) 下载最新版安装包：
 
-- Windows：`CodexPlusPlus-*-windows-x64-setup.exe`
-- macOS Intel：`CodexPlusPlus-*-macos-x64.dmg`
-- macOS Apple Silicon：`CodexPlusPlus-*-macos-arm64.dmg`
+- Windows：`QingyunJuhui-*-windows-x64-setup.exe`
+- macOS Intel：`QingyunJuhui-*-macos-x64.dmg`
+- macOS Apple Silicon：`QingyunJuhui-*-macos-arm64.dmg`
 
 安装后会有两个入口：
 
-- `Codex++`：静默启动官方桌面应用，并加载已保存的供应商配置与增强功能。
-- `Codex++ 管理工具`：管理供应商、模型、工具插件、会话、增强功能、脚本、更新和诊断。
+- `青云聚汇`：静默启动官方桌面应用，并加载已保存的供应商配置与增强功能。
+- `青云聚汇管理工具`：管理供应商、模型、工具插件、会话、增强功能、脚本、更新和诊断。
 
-首次使用建议先打开管理工具，确认应用路径和运行状态，再配置供应商与增强功能，最后从 `Codex++` 入口启动。Windows 安装包会创建桌面和开始菜单快捷方式；macOS DMG 会安装 `/Applications/Codex++.app` 和 `/Applications/Codex++ 管理工具.app`。
+首次使用建议先打开管理工具，确认应用路径和运行状态，再配置供应商与增强功能，最后从 `青云聚汇` 入口启动。Windows 安装包会创建桌面和开始菜单快捷方式；macOS DMG 会安装 `/Applications/青云聚汇.app` 和 `/Applications/青云聚汇管理工具.app`。
 
-## 赞助商
+## 官方中转站
 
 <p align="center">
-  <a href="https://jojocode.com/">
-    <img src="docs/images/sponsor-jojocode.png" alt="JOJO Code" height="110">
+  <a href="https://api.qinggekeji.top">
+    <img src="docs/images/codex-plus-plus.png" alt="青云聚汇" height="110">
   </a>
 </p>
 <p align="center">
-  <a href="https://jojocode.com/"><strong>JOJO Code｜Codex++ 官方中转站</strong></a><br>
-  Codex++ 官方中转站，主打稳定接入和划算价格，支持 GPT-5.6 全系列、Fable 5、Sonnet 5、GPT-5.5、GPT-5.4、Claude Opus 4.8、Claude Opus 4.7、gpt-image-2 等模型与图像能力，适合日常开发、团队协作和长期项目工作流。
+  <a href="https://api.qinggekeji.top"><strong>青云聚汇中转站</strong></a><br>
+  青云聚汇官方中转站，主打稳定接入和划算价格，支持 GPT-5.6 全系列、Fable 5、Sonnet 5、GPT-5.5、GPT-5.4、Claude Opus 4.8、Claude Opus 4.7、gpt-image-2 等模型与图像能力，适合日常开发、团队协作和长期项目工作流。
 </p>
 
 <a href="mailto:1727532@qq.com">想显示在下方？</a>
@@ -55,11 +55,11 @@ Codex++ 是面向 OpenAI Codex / ChatGPT 桌面应用的外部启动器与管理
   </tr>
   <tr>
     <td align="center">
-      <a href="https://jojocode.com/">
-        <img src="docs/images/sponsor-jojocode.png" alt="JOJO Code" height="80">
+      <a href="https://api.qinggekeji.top">
+        <img src="docs/images/codex-plus-plus.png" alt="青云聚汇" height="80">
       </a>
     </td>
-    <td><a href="https://jojocode.com/"><strong>JOJO Code｜Codex++ 官方中转站</strong></a><br>感谢 JOJO Code 赞助本项目。JOJO Code 是 Codex++ 官方中转站，提供价格划算、稳定易接入的 Codex API 中转服务，支持 GPT-5.6 全系列、Fable 5、Sonnet 5、GPT-5.5、GPT-5.4、Claude Opus 4.8、Claude Opus 4.7、gpt-image-2 等模型与图像能力，适合日常开发、快速配置、团队协作和长期使用。</td>
+    <td><a href="https://api.qinggekeji.top"><strong>青云聚汇中转站</strong></a><br>青云聚汇官方中转站提供价格划算、稳定易接入的 Codex API 中转服务，支持 GPT-5.6 全系列、Fable 5、Sonnet 5、GPT-5.5、GPT-5.4、Claude Opus 4.8、Claude Opus 4.7、gpt-image-2 等模型与图像能力，适合日常开发、快速配置、团队协作和长期使用。</td>
   </tr>
   <tr>
     <td align="center">

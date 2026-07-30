@@ -317,6 +317,6 @@ describe("dream skin theme helpers", () => {
     const assetProtocol = config.app?.security?.assetProtocol;
 
     assert.equal(assetProtocol?.enable, true);
-    assert.deepEqual(assetProtocol?.scope, ["$HOME/.codex-session-delete/dream-skin/**"]);
+    assert.deepEqual(assetProtocol?.scope, ["$HOME/.qingyun-juhui/dream-skin/**"]);
   });
 });

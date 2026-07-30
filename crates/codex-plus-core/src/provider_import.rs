@@ -362,8 +362,8 @@ mod tests {
     use super::*;
 
     #[test]
-    fn parses_codexplusplus_provider_url() {
-        let url = "codexplusplus://v1/import/provider?resource=provider&name=JOJO%20Code&baseUrl=https%3A%2F%2Fjojocode.com%2Fv1&apiKey=sk-test&wireApi=responses&relayMode=pureApi&configContents=bW9kZWxfcHJvdmlkZXIgPSAiQ29kZXhQbHVzUGx1cyIK&authContents=eyJPUEVOQUlfQVBJX0tFWSI6InNrLXRlc3QifQo%3D";
+    fn parses_qingyunjuhui_provider_url() {
+        let url = "qingyunjuhui://v1/import/provider?resource=provider&name=JOJO%20Code&baseUrl=https%3A%2F%2Fjojocode.com%2Fv1&apiKey=sk-test&wireApi=responses&relayMode=pureApi&configContents=bW9kZWxfcHJvdmlkZXIgPSAiQ29kZXhQbHVzUGx1cyIK&authContents=eyJPUEVOQUlfQVBJX0tFWSI6InNrLXRlc3QifQo%3D";
 
         let request = request_from_url(url).unwrap();
 
@@ -385,7 +385,7 @@ mod tests {
         let config = base64::engine::general_purpose::URL_SAFE_NO_PAD.encode(dangerous_config);
         let auth = base64::engine::general_purpose::URL_SAFE_NO_PAD.encode(dangerous_auth);
         let url = format!(
-            "codexplusplus://v1/import/provider?name=Unsafe&baseUrl=https%3A%2F%2Frelay.example%2Fv1&apiKey=sk-test&configContents={config}&authContents={auth}"
+            "qingyunjuhui://v1/import/provider?name=Unsafe&baseUrl=https%3A%2F%2Frelay.example%2Fv1&apiKey=sk-test&configContents={config}&authContents={auth}"
         );
 
         let request = request_from_url(&url).unwrap();

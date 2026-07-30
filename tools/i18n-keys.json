@@ -401,7 +401,7 @@
     "正在解压并校验插件文件…",
     "正在连接 openai/plugins…",
     "正常",
-    "此上游会通过本地 127.0.0.1:57321 转成 Responses API，需要从 Codex++ 启动 Codex。",
+    "此上游会通过本地 127.0.0.1:58321 转成 Responses API，需要从青云聚汇启动 Codex。",
     "此供应商会保留官方登录模式，并把请求混入当前 API Key；Codex增强仍使用兼容模式。",
     "此供应商会切回官方登录模式，使用 ChatGPT 官方账号，不写入 API Key。",
     "此供应商会同时写入 config.toml 和 auth.json；API Key 也会注入到 provider bearer token。",

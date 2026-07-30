@@ -389,7 +389,9 @@ fn app_paths_saved_path_is_used_when_no_explicit_path_is_provided() {
 fn app_paths_rejects_codex_plus_plus_install_dir_as_codex_app() {
     let temp = tempfile::tempdir().unwrap();
     let manager = temp.path().join("Programs").join("Codex++");
+    let branded_manager = temp.path().join("青云聚汇管理工具.app");
     std::fs::create_dir_all(&manager).unwrap();
+    std::fs::create_dir_all(&branded_manager).unwrap();
     std::fs::write(manager.join("Codex++ Manager.exe"), "").unwrap();
 
     assert_eq!(normalize_codex_app_path(&manager), None);
@@ -400,6 +402,7 @@ fn app_paths_rejects_codex_plus_plus_install_dir_as_codex_app() {
 
     let resolved = resolve_codex_app_dir_with_saved(None, Some(&manager.to_string_lossy()));
     assert_ne!(resolved.as_deref(), Some(manager.as_path()));
+    assert_eq!(normalize_codex_app_path(&branded_manager), None);
 }
 
 #[test]
@@ -1179,8 +1182,8 @@ async fn official_mix_responses_profile_starts_fixed_protocol_proxy_without_enha
 
     let events = events.lock().unwrap().clone();
     assert!(events.contains(&"select-helper:58123".to_string()));
-    assert!(events.contains(&"start-helper:57321".to_string()));
-    assert!(events.contains(&"shutdown-helper:57321".to_string()));
+    assert!(events.contains(&"start-helper:58321".to_string()));
+    assert!(events.contains(&"shutdown-helper:58321".to_string()));
     assert!(!events.iter().any(|event| event.starts_with("inject:")));
 }
 
@@ -1220,8 +1223,8 @@ async fn official_mix_responses_profile_keeps_proxy_when_profile_switching_is_di
 
     let events = events.lock().unwrap().clone();
     assert!(events.contains(&"select-helper:58123".to_string()));
-    assert!(events.contains(&"start-helper:57321".to_string()));
-    assert!(events.contains(&"shutdown-helper:57321".to_string()));
+    assert!(events.contains(&"start-helper:58321".to_string()));
+    assert!(events.contains(&"shutdown-helper:58321".to_string()));
     assert!(!events.iter().any(|event| event.starts_with("inject:")));
 }
 
@@ -1473,14 +1476,14 @@ async fn launch_starts_helper_when_chat_protocol_proxy_is_enabled() {
 
     let before_stop = events.lock().unwrap().clone();
     assert!(before_stop.contains(&"select-helper:58000".to_string()));
-    assert!(before_stop.contains(&"start-helper:57321".to_string()));
-    assert!(!before_stop.contains(&"inject:9229:57321".to_string()));
+    assert!(before_stop.contains(&"start-helper:58321".to_string()));
+    assert!(!before_stop.contains(&"inject:9229:58321".to_string()));
 
     handle.wait_for_codex_exit().await.unwrap();
 
     let after_stop = events.lock().unwrap().clone();
     assert!(after_stop.contains(&"wait-codex".to_string()));
-    assert!(after_stop.contains(&"shutdown-helper:57321".to_string()));
+    assert!(after_stop.contains(&"shutdown-helper:58321".to_string()));
 }
 
 #[tokio::test]

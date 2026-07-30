@@ -1,8 +1,8 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "Codex++ Manager",
+  "productName": "青云聚汇管理工具",
   "version": "1.2.43",
-  "identifier": "com.bigpizzav3.codexplusplus.manager",
+  "identifier": "com.qingyunjuhui.manager",
   "build": {
     "beforeDevCommand": "npm run vite:dev",
     "beforeBuildCommand": "npm run vite:build",
@@ -14,7 +14,7 @@
       {
         "create": false,
         "label": "main",
-        "title": "Codex++ 管理工具",
+        "title": "青云聚汇管理工具",
         "width": 1180,
         "height": 820,
         "minWidth": 960,
@@ -26,7 +26,7 @@
       "assetProtocol": {
         "enable": true,
         "scope": [
-          "$HOME/.codex-session-delete/dream-skin/**"
+          "$HOME/.qingyun-juhui/dream-skin/**"
         ]
       }
     }

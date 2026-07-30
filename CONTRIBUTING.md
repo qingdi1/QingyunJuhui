@@ -1,13 +1,13 @@
-# Contributing to CodexPlusPlus
+# Contributing to QingyunJuhui
 
-Thank you for your interest in contributing to CodexPlusPlus!
+Thank you for your interest in contributing to QingyunJuhui!
 
 ## Development Setup
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/BigPizzaV3/CodexPlusPlus.git
-   cd CodexPlusPlus
+   git clone https://github.com/qingdi1/QingyunJuhui.git
+   cd QingyunJuhui
    ```
 
 2. **Install Rust toolchain**

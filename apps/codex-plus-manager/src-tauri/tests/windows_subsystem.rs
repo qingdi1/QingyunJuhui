@@ -68,11 +68,11 @@ fn manager_close_minimizes_to_tray_without_confirmation() {
 }
 
 #[test]
-fn manager_queues_codexplusplus_provider_urls_for_confirmation_on_startup() {
+fn manager_queues_qingyunjuhui_provider_urls_for_confirmation_on_startup() {
     let main_rs = std::fs::read_to_string(concat!(env!("CARGO_MANIFEST_DIR"), "/src/main.rs"))
         .expect("read manager main.rs");
 
-    assert!(main_rs.contains("codexplusplus://"));
+    assert!(main_rs.contains("qingyunjuhui://"));
     assert!(main_rs.contains("provider_import::save_pending_provider_import_from_url"));
     assert!(!main_rs.contains("provider_import::import_provider_from_url"));
     assert!(main_rs.contains("manager.provider_import_url.pending"));
@@ -122,7 +122,7 @@ fn windows_binaries_request_administrator_privileges() {
 }
 
 #[test]
-fn windows_entrypoints_register_codexplusplus_url_protocol() {
+fn windows_entrypoints_register_qingyunjuhui_url_protocol() {
     let manifest_dir = std::path::Path::new(env!("CARGO_MANIFEST_DIR"));
     let windows_install = manifest_dir
         .parent()
@@ -133,7 +133,7 @@ fn windows_entrypoints_register_codexplusplus_url_protocol() {
     let windows_install =
         std::fs::read_to_string(&windows_install).expect("read windows install source");
 
-    assert!(windows_install.contains("Software\\Classes\\codexplusplus"));
+    assert!(windows_install.contains("Software\\Classes\\qingyunjuhui"));
     assert!(windows_install.contains("URL Protocol"));
     assert!(windows_install.contains("%1"));
 }
@@ -163,12 +163,12 @@ fn macos_packager_hides_silent_launcher_but_not_manager() {
     assert!(script.contains("<key>LSUIElement</key>"));
     assert!(script.contains("ARCH=\"${2:-$(uname -m)}\""));
     assert!(script.contains("BINARY_DIR=\"${BINARY_DIR:-$ROOT/target/release}\""));
-    assert!(script.contains("CodexPlusPlus-${VERSION}-macos-${ARCH}.dmg"));
+    assert!(script.contains("QingyunJuhui-${VERSION}-macos-${ARCH}.dmg"));
     assert!(script.contains(
-        "create_app \"Codex++\" \"CodexPlusPlus\" \"$BINARY_DIR/codex-plus-plus\" \"com.bigpizzav3.codexplusplus\" \"true\""
+        "create_app \"青云聚汇\" \"QingyunJuhui\" \"$BINARY_DIR/qingyun-juhui\" \"com.qingyunjuhui\" \"true\""
     ));
     assert!(script.contains(
-        "create_app \"Codex++ 管理工具\" \"CodexPlusPlusManager\" \"$BINARY_DIR/codex-plus-plus-manager\" \"com.bigpizzav3.codexplusplus.manager\" \"false\""
+        "create_app \"青云聚汇管理工具\" \"QingyunJuhuiManager\" \"$BINARY_DIR/qingyun-juhui-manager\" \"com.qingyunjuhui.manager\" \"false\""
     ));
 }
 

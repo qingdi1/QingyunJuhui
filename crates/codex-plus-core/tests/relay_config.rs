@@ -412,7 +412,7 @@ fn apply_aggregate_relay_points_codex_to_local_responses_proxy_without_snapshot(
 
     assert!(result.configured);
     assert!(updated.contains(r#"wire_api = "responses""#));
-    assert!(updated.contains(r#"base_url = "http://127.0.0.1:57321/v1""#));
+    assert!(updated.contains(r#"base_url = "http://127.0.0.1:58321/v1""#));
     assert!(updated.contains(r#"experimental_bearer_token = "codex-plus-aggregate""#));
 }
 
@@ -448,13 +448,13 @@ base_url = "http://127.0.0.1:57321/v1"
     assert!(
         profile
             .config_contents
-            .contains(r#"base_url = "http://127.0.0.1:57321/v1""#)
+            .contains(r#"base_url = "http://127.0.0.1:58321/v1""#)
     );
 
     apply_relay_profile_to_home_with_switch_rules(temp.path(), &profile, "").unwrap();
     let live = std::fs::read_to_string(temp.path().join("config.toml")).unwrap();
     assert!(!live.contains("codex_plus_chat_base_url"));
-    assert!(live.contains(r#"base_url = "http://127.0.0.1:57321/v1""#));
+    assert!(live.contains(r#"base_url = "http://127.0.0.1:58321/v1""#));
 }
 
 #[test]
@@ -488,7 +488,7 @@ fn official_mix_api_profile_does_not_generate_auth_api_key() {
     assert!(
         profile
             .config_contents
-            .contains(r#"openai_base_url = "http://127.0.0.1:57321/v1""#)
+            .contains(r#"openai_base_url = "http://127.0.0.1:58321/v1""#)
     );
 }
 
@@ -3068,7 +3068,7 @@ experimental_bearer_token = "sk-official-mix"
     let config = std::fs::read_to_string(temp.path().join("config.toml")).unwrap();
     assert!(config.contains(r#"experimental_bearer_token = "sk-official-mix""#));
     assert!(config.contains("requires_openai_auth = true"));
-    assert!(config.contains(r#"openai_base_url = "http://127.0.0.1:57321/v1""#));
+    assert!(config.contains(r#"openai_base_url = "http://127.0.0.1:58321/v1""#));
 }
 
 #[test]

@@ -1,5 +1,5 @@
 /**
- * Codex++ 供应商预设
+ * 青云聚汇供应商预设
  * 基于 cc-switch (MIT) 的 codexProviderPresets.ts，作者 Jason Young
  * https://github.com/farion1231/cc-switch
  *
@@ -163,22 +163,12 @@ export const PRESETS: ProviderPreset[] = [
 
   // ── 聚合/中转 ──
   {
-    id: "jojocode",
-    name: "JOJO Code",
-    websiteUrl: "https://jojocode.com/",
-    apiKeyUrl: "https://jojocode.com/",
+    id: "qingyun-juhui",
+    name: "青云聚汇中转站",
+    websiteUrl: "https://api.qinggekeji.top",
+    apiKeyUrl: "https://api.qinggekeji.top",
     category: "aggregator",
-    baseUrl: "https://jojocode.com/v1",
-    protocol: "responses",
-    model: "gpt-5.5",
-  },
-  {
-    id: "jojocode-max",
-    name: "JOJO Code 包月",
-    websiteUrl: "https://max.jojocode.com/",
-    apiKeyUrl: "https://max.jojocode.com/",
-    category: "aggregator",
-    baseUrl: "https://max.jojocode.com/v1",
+    baseUrl: "https://api.qinggekeji.top/v1",
     protocol: "responses",
     model: "gpt-5.5",
   },

@@ -404,12 +404,6 @@ pub struct WatcherPayload {
 }
 
 #[derive(Debug, Clone, Serialize)]
-pub struct AdsPayload {
-    pub version: u64,
-    pub ads: Vec<Value>,
-}
-
-#[derive(Debug, Clone, Serialize)]
 pub struct ScriptMarketPayload {
     pub market: Value,
     pub user_scripts: Value,
@@ -1193,7 +1187,7 @@ fn managed_dream_skin_image_backup(
     state_dir: &Path,
 ) -> anyhow::Result<ManagedDreamSkinImageBackup> {
     if !codex_plus_core::dream_skin::is_managed_dream_skin_image(path, state_dir) {
-        anyhow::bail!("Dream Skin image is not managed by Codex++");
+        anyhow::bail!("Dream Skin image is not managed by Qingyun Juhui");
     }
     Ok(ManagedDreamSkinImageBackup {
         path: path.to_path_buf(),
@@ -2023,20 +2017,6 @@ fn persist_provider_sync_selection(provider: &str) {
     settings.provider_sync_saved_providers =
         normalize_provider_sync_provider_list(settings.provider_sync_saved_providers);
     let _ = store.save(&settings);
-}
-
-#[tauri::command]
-pub async fn load_ads() -> CommandResult<AdsPayload> {
-    match codex_plus_core::ads::fetch_ad_list().await {
-        Ok(payload) => ok("推荐内容已加载。", ads_payload(payload)),
-        Err(error) => failed(
-            &format!("推荐内容加载失败：{error}"),
-            AdsPayload {
-                version: 1,
-                ads: Vec::new(),
-            },
-        ),
-    }
 }
 
 #[tauri::command]
@@ -3681,7 +3661,10 @@ fn log_relay_apply_request(
             "baseUrl": relay.base_url,
             "hasConfigContents": !relay.config_contents.trim().is_empty(),
             "hasAuthContents": !relay.auth_contents.trim().is_empty(),
-            "configContainsProxy": relay.config_contents.contains("127.0.0.1:57321")
+            "configContainsProxy": relay.config_contents.contains(&format!(
+                "127.0.0.1:{}",
+                codex_plus_core::protocol_proxy::DEFAULT_PROTOCOL_PROXY_PORT
+            ))
         }),
     );
 }
@@ -3812,17 +3795,6 @@ fn read_optional_text_file(path: &std::path::Path) -> anyhow::Result<String> {
         Ok(contents) => Ok(contents),
         Err(error) if error.kind() == std::io::ErrorKind::NotFound => Ok(String::new()),
         Err(error) => Err(error.into()),
-    }
-}
-
-fn ads_payload(payload: Value) -> AdsPayload {
-    AdsPayload {
-        version: payload.get("version").and_then(Value::as_u64).unwrap_or(1),
-        ads: payload
-            .get("ads")
-            .and_then(Value::as_array)
-            .cloned()
-            .unwrap_or_default(),
     }
 }
 
@@ -3984,14 +3956,14 @@ fn default_user_script_manager() -> UserScriptManager {
 fn user_scripts_config_dir() -> PathBuf {
     if cfg!(windows) {
         if let Some(roaming) = std::env::var_os("APPDATA") {
-            return PathBuf::from(roaming).join("Codex++");
+            return PathBuf::from(roaming).join("QingyunJuhui");
         }
     }
     std::env::var_os("XDG_CONFIG_HOME")
         .map(PathBuf::from)
         .or_else(|| directories::BaseDirs::new().map(|dirs| dirs.home_dir().join(".config")))
         .unwrap_or_else(|| PathBuf::from(".config"))
-        .join("Codex++")
+        .join("QingyunJuhui")
 }
 
 fn builtin_user_scripts_dir() -> PathBuf {
@@ -4167,7 +4139,7 @@ fn default_debug_port() -> u16 {
 }
 
 fn default_helper_port() -> u16 {
-    57321
+    codex_plus_core::protocol_proxy::DEFAULT_PROTOCOL_PROXY_PORT
 }
 
 fn default_log_lines() -> usize {
@@ -4282,7 +4254,7 @@ mod tests {
     #[test]
     fn startup_options_honors_show_update_argument() {
         assert!(should_show_update(
-            ["codex-plus-plus-manager.exe", "--show-update"],
+            ["qingyun-juhui-manager.exe", "--show-update"],
             None
         ));
     }
@@ -4569,7 +4541,7 @@ mod tests {
         assert_eq!(result.status, "ok");
         assert!(result.payload.configured);
         assert!(!result.payload.authenticated);
-        assert!(config.contains(r#"base_url = "http://127.0.0.1:57321/v1""#));
+        assert!(config.contains(r#"base_url = "http://127.0.0.1:58321/v1""#));
         assert!(config.contains(r#"experimental_bearer_token = "codex-plus-aggregate""#));
     }
 
@@ -5171,18 +5143,6 @@ model_reasoning_effort = "high"
                 .relay_context_config_contents
                 .contains("[mcp_servers.context7]")
         );
-    }
-
-    #[test]
-    fn ads_payload_keeps_version_and_ad_items() {
-        let payload = ads_payload(json!({
-            "version": 1,
-            "ads": [{"id": "ad-1", "type": "normal", "title": "Ad"}]
-        }));
-
-        assert_eq!(payload.version, 1);
-        assert_eq!(payload.ads.len(), 1);
-        assert_eq!(payload.ads[0]["id"], json!("ad-1"));
     }
 
     #[test]

@@ -1,7 +1,7 @@
-# Codex++
+# Qingyun Juhui
 
 <p align="center">
-  <img src="docs/images/codex-plus-plus.png" alt="Codex++ icon" width="160">
+  <img src="docs/images/codex-plus-plus.png" alt="Qingyun Juhui icon" width="160">
 </p>
 
 <p align="center">
@@ -9,40 +9,40 @@
 </p>
 
 <p align="center">
-  <img alt="Release" src="https://img.shields.io/github/v/release/BigPizzaV3/CodexPlusPlus">
-  <img alt="Stars" src="https://img.shields.io/github/stars/BigPizzaV3/CodexPlusPlus">
-  <img alt="License" src="https://img.shields.io/github/license/BigPizzaV3/CodexPlusPlus">
+  <img alt="Release" src="https://img.shields.io/github/v/release/qingdi1/QingyunJuhui">
+  <img alt="Stars" src="https://img.shields.io/github/stars/qingdi1/QingyunJuhui">
+  <img alt="License" src="https://img.shields.io/github/license/qingdi1/QingyunJuhui">
   <img alt="Rust" src="https://img.shields.io/badge/rust-1.85%2B-orange">
   <img alt="Tauri" src="https://img.shields.io/badge/tauri-2.x-24C8DB">
 </p>
 
-Codex++ is an external launcher and manager for the OpenAI Codex / ChatGPT desktop app. It uses the Chromium DevTools Protocol and a local helper for provider switching, protocol conversion, session management, and UI enhancements without modifying the official app's `app.asar` or installation files.
+Qingyun Juhui is an independent CodexPlusPlus-based launcher and manager for the OpenAI Codex / ChatGPT desktop app. It uses the Chromium DevTools Protocol and a local helper for provider switching, protocol conversion, session management, and UI enhancements without modifying the official app's `app.asar` or installation files.
 
 ## Quick Start
 
-Download the latest installer from [GitHub Releases](https://github.com/BigPizzaV3/CodexPlusPlus/releases):
+Download the latest installer from [GitHub Releases](https://github.com/qingdi1/QingyunJuhui/releases):
 
-- Windows: `CodexPlusPlus-*-windows-x64-setup.exe`
-- macOS Intel: `CodexPlusPlus-*-macos-x64.dmg`
-- macOS Apple Silicon: `CodexPlusPlus-*-macos-arm64.dmg`
+- Windows: `QingyunJuhui-*-windows-x64-setup.exe`
+- macOS Intel: `QingyunJuhui-*-macos-x64.dmg`
+- macOS Apple Silicon: `QingyunJuhui-*-macos-arm64.dmg`
 
 After installation, two entry points are available:
 
-- `Codex++`: silently starts the official desktop app with saved provider settings and enhancements.
-- `Codex++ Manager`: manages providers, models, tools, sessions, enhancements, scripts, updates, and diagnostics.
+- `Qingyun Juhui`: silently starts the official desktop app with saved provider settings and enhancements.
+- `Qingyun Juhui Manager`: manages providers, models, tools, sessions, enhancements, scripts, updates, and diagnostics.
 
-For first-time setup, open the manager, verify the detected app path, configure a provider and optional enhancements, then launch through `Codex++`. The Windows installer creates Desktop and Start Menu shortcuts. The macOS DMG installs `/Applications/Codex++.app` and `/Applications/Codex++ 管理工具.app`.
+For first-time setup, open the manager, verify the detected app path, configure a provider and optional enhancements, then launch through `Qingyun Juhui`. The Windows installer creates Desktop and Start Menu shortcuts. The macOS DMG installs `/Applications/青云聚汇.app` and `/Applications/青云聚汇管理工具.app`.
 
-## Sponsors
+## Official Relay
 
 <p align="center">
-  <a href="https://jojocode.com/">
-    <img src="docs/images/sponsor-jojocode.png" alt="JOJO Code" width="180">
+  <a href="https://api.qinggekeji.top">
+    <img src="docs/images/codex-plus-plus.png" alt="Qingyun Juhui" width="180">
   </a>
 </p>
 <p align="center">
-  <a href="https://jojocode.com/"><strong>JOJO Code | Official Codex++ Relay</strong></a><br>
-  The official Codex++ relay service, focused on stable access and cost-effective pricing. JOJO Code supports the full GPT-5.6 family, Fable 5, Sonnet 5, GPT-5.5, GPT-5.4, Claude Opus 4.8, Claude Opus 4.7, gpt-image-2, and more for daily development, team collaboration, and long-running project workflows.
+  <a href="https://api.qinggekeji.top"><strong>Qingyun Juhui Relay</strong></a><br>
+  The official Qingyun Juhui relay focuses on stable access and cost-effective pricing. It supports the full GPT-5.6 family, Fable 5, Sonnet 5, GPT-5.5, GPT-5.4, Claude Opus 4.8, Claude Opus 4.7, gpt-image-2, and more for daily development, team collaboration, and long-running project workflows.
 </p>
 
 <p align="center">
@@ -55,11 +55,11 @@ For first-time setup, open the manager, verify the detected app path, configure 
   </tr>
   <tr>
     <td align="center">
-      <a href="https://jojocode.com/">
-        <img src="docs/images/sponsor-jojocode.png" alt="JOJO Code" width="150">
+      <a href="https://api.qinggekeji.top">
+        <img src="docs/images/codex-plus-plus.png" alt="Qingyun Juhui" width="150">
       </a>
     </td>
-    <td><a href="https://jojocode.com/"><strong>JOJO Code | Official Codex++ Relay</strong></a><br>Thanks to JOJO Code for sponsoring this project. JOJO Code is the official Codex++ relay service with cost-effective pricing and stable, easy-to-configure Codex API access. It supports the full GPT-5.6 family, Fable 5, Sonnet 5, GPT-5.5, GPT-5.4, Claude Opus 4.8, Claude Opus 4.7, gpt-image-2, and more for daily development, quick setup, team collaboration, and continuous use.</td>
+    <td><a href="https://api.qinggekeji.top"><strong>Qingyun Juhui Relay</strong></a><br>The official Qingyun Juhui relay provides cost-effective pricing and stable, easy-to-configure Codex API access. It supports the full GPT-5.6 family, Fable 5, Sonnet 5, GPT-5.5, GPT-5.4, Claude Opus 4.8, Claude Opus 4.7, gpt-image-2, and more for daily development, quick setup, team collaboration, and continuous use.</td>
   </tr>
   <tr>
     <td align="center">

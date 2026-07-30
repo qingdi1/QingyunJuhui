@@ -241,13 +241,9 @@ pub fn responses_proxy_configured_in_home(home: &Path) -> bool {
         Ok(contents) => contents,
         Err(_) => return false,
     };
-    provider_string_from_config(&contents, "base_url").as_deref()
-        == Some(
-            crate::protocol_proxy::local_responses_proxy_base_url(
-                crate::protocol_proxy::DEFAULT_PROTOCOL_PROXY_PORT,
-            )
-            .as_str(),
-        )
+    provider_string_from_config(&contents, "base_url")
+        .as_deref()
+        .is_some_and(crate::protocol_proxy::is_managed_local_responses_proxy_base_url)
 }
 
 pub fn apply_relay_config_to_home(
@@ -635,10 +631,15 @@ fn update_remote_control_openai_base_url(doc: &mut DocumentMut, enabled: bool) {
         .map(ToString::to_string);
 
     if enabled {
-        if current.as_deref().is_none_or(|value| value == managed) {
+        if current.as_deref().is_none_or(|value| {
+            crate::protocol_proxy::is_managed_local_responses_proxy_base_url(value)
+        }) {
             doc[OPENAI_BASE_URL_KEY] = toml_edit::value(managed);
         }
-    } else if current.as_deref() == Some(managed.as_str()) {
+    } else if current
+        .as_deref()
+        .is_some_and(crate::protocol_proxy::is_managed_local_responses_proxy_base_url)
+    {
         doc.as_table_mut().remove(OPENAI_BASE_URL_KEY);
     }
 }
@@ -756,13 +757,9 @@ pub fn backfill_relay_profile_from_home_with_common(
     profile.config_contents =
         restore_profile_provider_id_for_backfill(&profile.config_contents, &template_config)?;
     if profile.protocol == RelayProtocol::Responses
-        && provider_string_from_config(&profile.config_contents, "base_url").as_deref()
-            == Some(
-                crate::protocol_proxy::local_responses_proxy_base_url(
-                    crate::protocol_proxy::DEFAULT_PROTOCOL_PROXY_PORT,
-                )
-                .as_str(),
-            )
+        && provider_string_from_config(&profile.config_contents, "base_url")
+            .as_deref()
+            .is_some_and(crate::protocol_proxy::is_managed_local_responses_proxy_base_url)
         && !template_base_url.trim().is_empty()
     {
         let mut doc = parse_toml_document(&profile.config_contents)?;
@@ -2141,10 +2138,7 @@ pub fn relay_profile_base_url(profile: &RelayProfile) -> String {
         .filter(|value| !value.trim().is_empty())
         .unwrap_or_default();
     if profile.protocol == RelayProtocol::ChatCompletions
-        && provider_base_url
-            == crate::protocol_proxy::local_responses_proxy_base_url(
-                crate::protocol_proxy::DEFAULT_PROTOCOL_PROXY_PORT,
-            )
+        && crate::protocol_proxy::is_managed_local_responses_proxy_base_url(&provider_base_url)
     {
         String::new()
     } else if !provider_base_url.is_empty() {

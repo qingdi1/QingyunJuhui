@@ -50,23 +50,23 @@ fn watcher_enable_and_disable_toggle_flag() {
 
 #[test]
 fn watcher_install_plan_registers_rust_launcher_at_logon() {
-    let plan = build_watcher_install_plan("C:/Tools/codex-plus-plus.exe".into(), 9333);
+    let plan = build_watcher_install_plan("C:/Tools/qingyun-juhui.exe".into(), 9333);
 
-    assert_eq!(plan.run_value_name, "CodexPlusPlusWatcher");
+    assert_eq!(plan.run_value_name, "QingyunJuhuiWatcher");
     assert_eq!(
         plan.run_value,
-        "\"C:/Tools/codex-plus-plus.exe\" --debug-port 9333"
+        "\"C:/Tools/qingyun-juhui.exe\" --debug-port 9333"
     );
-    assert_eq!(plan.shortcut_name, "CodexPlusPlusWatcher.lnk");
-    assert_eq!(plan.shortcut_target, "C:/Tools/codex-plus-plus.exe");
+    assert_eq!(plan.shortcut_name, "QingyunJuhuiWatcher.lnk");
+    assert_eq!(plan.shortcut_target, "C:/Tools/qingyun-juhui.exe");
     assert_eq!(plan.shortcut_arguments, "--debug-port 9333");
 }
 
 #[test]
 fn spawn_launcher_command_points_to_silent_binary_only() {
-    let command = build_spawn_launcher_command("C:/Tools/codex-plus-plus.exe", 9444);
+    let command = build_spawn_launcher_command("C:/Tools/qingyun-juhui.exe", 9444);
 
-    assert_eq!(command[0], "C:/Tools/codex-plus-plus.exe");
+    assert_eq!(command[0], "C:/Tools/qingyun-juhui.exe");
     assert!(command.contains(&"--debug-port".to_string()));
     assert!(command.contains(&"9444".to_string()));
     assert!(!command.iter().any(|part| part.contains("manager")));
@@ -116,11 +116,11 @@ fn codex_process_filter_keeps_chatgpt_desktop_package_processes() {
 #[test]
 fn launcher_process_filter_protects_current_process_ancestry() {
     let processes = [
-        (10, 0, "codex-plus-plus.exe"),
-        (20, 10, "codex-plus-plus.exe"),
-        (30, 20, "codex-plus-plus.exe"),
-        (40, 10, "codex-plus-plus.exe"),
-        (50, 10, "codex-plus-plus-manager.exe"),
+        (10, 0, "qingyun-juhui.exe"),
+        (20, 10, "qingyun-juhui.exe"),
+        (30, 20, "qingyun-juhui.exe"),
+        (40, 10, "qingyun-juhui.exe"),
+        (50, 10, "qingyun-juhui-manager.exe"),
     ];
 
     assert_eq!(filter_killable_launcher_processes(processes, 30), vec![40]);
@@ -281,9 +281,9 @@ fn find_codex_processes_ignores_unrelated_processes() {
         WindowsProcessInfo {
             process_id: 20,
             parent_process_id: 0,
-            exe_file: "codex-plus-plus.exe".to_string(),
+            exe_file: "qingyun-juhui.exe".to_string(),
             executable_path: Some(std::path::PathBuf::from(
-                r"D:\Programs\Codex++\codex-plus-plus.exe",
+                r"D:\Programs\QingyunJuhui\qingyun-juhui.exe",
             )),
         },
     ];

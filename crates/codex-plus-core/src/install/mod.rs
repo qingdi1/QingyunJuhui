@@ -7,12 +7,12 @@ use serde::{Deserialize, Serialize};
 pub mod macos;
 pub mod windows;
 
-pub const SILENT_NAME: &str = "Codex++";
-pub const MANAGER_NAME: &str = "Codex++ 管理工具";
-pub const SILENT_BINARY: &str = "codex-plus-plus";
-pub const MANAGER_BINARY: &str = "codex-plus-plus-manager";
-pub const SILENT_BUNDLE_ID: &str = "com.bigpizzav3.codexplusplus";
-pub const MANAGER_BUNDLE_ID: &str = "com.bigpizzav3.codexplusplus.manager";
+pub const SILENT_NAME: &str = "青云聚汇";
+pub const MANAGER_NAME: &str = "青云聚汇管理工具";
+pub const SILENT_BINARY: &str = "qingyun-juhui";
+pub const MANAGER_BINARY: &str = "qingyun-juhui-manager";
+pub const SILENT_BUNDLE_ID: &str = "com.qingyunjuhui";
+pub const MANAGER_BUNDLE_ID: &str = "com.qingyunjuhui.manager";
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
 #[serde(rename_all = "camelCase")]
@@ -76,11 +76,11 @@ impl ShortcutState {
 }
 
 pub fn shortcut_names() -> (&'static str, &'static str) {
-    ("Codex++.lnk", "Codex++ 管理工具.lnk")
+    ("青云聚汇.lnk", "青云聚汇管理工具.lnk")
 }
 
 pub fn app_bundle_names() -> (&'static str, &'static str) {
-    ("Codex++.app", "Codex++ 管理工具.app")
+    ("青云聚汇.app", "青云聚汇管理工具.app")
 }
 
 pub fn inspect_entrypoints() -> EntryPointState {
@@ -136,8 +136,9 @@ pub fn default_install_root() -> Option<PathBuf> {
     #[cfg(target_os = "macos")]
     {
         let sys_apps = PathBuf::from("/Applications");
-        if sys_apps.join(format!("{SILENT_NAME}.app")).exists()
-            || sys_apps.join(format!("{MANAGER_NAME}.app")).exists()
+        if [SILENT_NAME, MANAGER_NAME]
+            .iter()
+            .any(|name| sys_apps.join(format!("{name}.app")).exists())
         {
             return Some(sys_apps);
         }
@@ -181,7 +182,7 @@ fn platform_install(options: &InstallOptions) -> anyhow::Result<()> {
     #[cfg(not(any(windows, target_os = "macos")))]
     {
         let _ = options;
-        anyhow::bail!("当前平台暂不支持安装 Codex++ 入口")
+        anyhow::bail!("当前平台暂不支持安装青云聚汇入口")
     }
 }
 
@@ -199,7 +200,7 @@ fn platform_uninstall(options: &InstallOptions) -> anyhow::Result<()> {
     #[cfg(not(any(windows, target_os = "macos")))]
     {
         let _ = options;
-        anyhow::bail!("当前平台暂不支持卸载 Codex++ 入口")
+        anyhow::bail!("当前平台暂不支持卸载青云聚汇入口")
     }
 }
 
@@ -225,13 +226,26 @@ fn entrypoint_candidates(root: &Option<PathBuf>, manager: bool) -> Vec<PathBuf> 
     let Some(root) = root else {
         return Vec::new();
     };
-    let name = if manager { MANAGER_NAME } else { SILENT_NAME };
-    if cfg!(windows) {
-        vec![root.join(format!("{name}.lnk"))]
-    } else if cfg!(target_os = "macos") {
-        vec![root.join(format!("{name}.app"))]
+    let names = if manager {
+        [MANAGER_NAME]
     } else {
-        vec![root.join(format!("{name}.desktop"))]
+        [SILENT_NAME]
+    };
+    if cfg!(windows) {
+        names
+            .into_iter()
+            .map(|name| root.join(format!("{name}.lnk")))
+            .collect()
+    } else if cfg!(target_os = "macos") {
+        names
+            .into_iter()
+            .map(|name| root.join(format!("{name}.app")))
+            .collect()
+    } else {
+        names
+            .into_iter()
+            .map(|name| root.join(format!("{name}.desktop")))
+            .collect()
     }
 }
 
@@ -298,8 +312,9 @@ pub fn macos_companion_bundle_identifier_from_exe(
     binary: &str,
 ) -> Option<&'static str> {
     let (_, app_name) = macos_applications_dir_and_app_name_from_exe(exe)?;
-    let known_bundle =
-        app_name == format!("{SILENT_NAME}.app") || app_name == format!("{MANAGER_NAME}.app");
+    let known_bundle = [SILENT_NAME, MANAGER_NAME]
+        .iter()
+        .any(|name| app_name == format!("{name}.app"));
     if !known_bundle {
         return None;
     }
@@ -330,7 +345,7 @@ fn macos_companion_binary_from_exe(exe: &Path, binary: &str) -> Option<PathBuf> 
             return Some(macos_preferred_bundle_binary(
                 exe,
                 SILENT_BINARY,
-                "CodexPlusPlus",
+                "QingyunJuhui",
             ));
         }
         let macos = applications_dir
@@ -342,7 +357,7 @@ fn macos_companion_binary_from_exe(exe: &Path, binary: &str) -> Option<PathBuf> 
                 .join(SILENT_BINARY)
                 .exists()
                 .then(|| macos.join(SILENT_BINARY))
-                .unwrap_or_else(|| macos.join("CodexPlusPlus")),
+                .unwrap_or_else(|| macos.join("QingyunJuhui")),
         );
     }
     if binary == MANAGER_BINARY {
@@ -350,7 +365,7 @@ fn macos_companion_binary_from_exe(exe: &Path, binary: &str) -> Option<PathBuf> 
             return Some(macos_preferred_bundle_binary(
                 exe,
                 MANAGER_BINARY,
-                "CodexPlusPlusManager",
+                "QingyunJuhuiManager",
             ));
         }
         let macos = applications_dir
@@ -362,7 +377,7 @@ fn macos_companion_binary_from_exe(exe: &Path, binary: &str) -> Option<PathBuf> 
                 .join(MANAGER_BINARY)
                 .exists()
                 .then(|| macos.join(MANAGER_BINARY))
-                .unwrap_or_else(|| macos.join("CodexPlusPlusManager")),
+                .unwrap_or_else(|| macos.join("QingyunJuhuiManager")),
         );
     }
     None
