@@ -2637,6 +2637,7 @@ export function App() {
   return (
     <div className={`shell ${theme}`}>
       <aside className="sidebar">
+        <div aria-hidden="true" className="sidebar-art" />
         <div className="brand">
           <div className="brand-mark" aria-hidden="true">青</div>
           <div className="brand-copy">

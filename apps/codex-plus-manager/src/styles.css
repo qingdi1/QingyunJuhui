@@ -5968,6 +5968,24 @@ select,
   z-index: 1;
 }
 
+.sidebar > .sidebar-art {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  background:
+    linear-gradient(180deg, hsl(var(--sidebar-bg) / 0.16), hsl(var(--sidebar-bg) / 0.58)),
+    url("./assets/ink-mountains.svg") 54% bottom / auto 82% no-repeat,
+    url("./assets/qingyun-parchment-master.png") 52% center / cover no-repeat;
+  background-blend-mode: normal, normal, normal;
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+.dark .sidebar > .sidebar-art {
+  filter: brightness(0.72) saturate(0.72) contrast(1.04);
+  opacity: 0.58;
+}
+
 .brand {
   position: relative;
   border-bottom: 0;
