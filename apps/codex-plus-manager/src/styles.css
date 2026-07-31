@@ -5917,7 +5917,15 @@ select,
   overflow: hidden;
   border-right: 1px solid hsl(var(--rim) / 0.7);
   border-radius: 0 20px 20px 0;
-  background: linear-gradient(145deg, hsl(var(--sidebar-bg) / 0.82), hsl(var(--sidebar-muted) / 0.92));
+  background-color: hsl(var(--sidebar-bg));
+  background-image:
+    linear-gradient(145deg, hsl(var(--sidebar-bg) / 0.84), hsl(var(--sidebar-muted) / 0.93)),
+    url("./assets/ink-mountains.svg"),
+    url("./assets/qingyun-parchment-master.png");
+  background-position: center, 58% bottom, 52% center;
+  background-size: cover, auto 84%, cover;
+  background-repeat: no-repeat;
+  background-blend-mode: normal, soft-light, soft-light;
   backdrop-filter: blur(60px) saturate(1.2);
   box-shadow:
     inset -1px 0 hsl(var(--rim) / 0.7),
@@ -5930,18 +5938,16 @@ select,
   z-index: 0;
   inset: 0;
   background:
-    linear-gradient(180deg, hsl(var(--paper-highlight) / 0.08), transparent 28%, hsl(var(--ink-shadow) / 0.08)),
-    url("./assets/qingyun-parchment-master.png") 52% center / cover no-repeat;
+    radial-gradient(ellipse at 52% 92%, hsl(var(--mineral-blue) / 0.16), transparent 62%),
+    linear-gradient(180deg, hsl(var(--paper-highlight) / 0.1), transparent 28%, hsl(var(--ink-shadow) / 0.1));
   content: "";
-  filter: grayscale(0.35) contrast(0.78) blur(0.4px);
   mix-blend-mode: soft-light;
-  opacity: 0.34;
+  opacity: 0.54;
   pointer-events: none;
 }
 
 .dark .sidebar::before {
-  filter: brightness(0.38) grayscale(0.6) contrast(0.9) blur(0.5px);
-  opacity: 0.28;
+  opacity: 0.38;
 }
 
 .sidebar::after {
