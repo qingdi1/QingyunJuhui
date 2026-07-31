@@ -19,6 +19,8 @@ export const EN_PLAIN: Record<string, string> = {
   "正在核验": "Verifying",
   "正在获取模型": "Fetching models",
   "正在验证密钥并自动获取可用模型…": "Validating the API key and fetching available models…",
+  "Responses API 核验失败，正在自动尝试 Chat Completions…":
+    "Responses API verification failed. Trying Chat Completions automatically…",
   "核验已通过，但写入 Codex 配置失败。请根据上方提示处理后重试。":
     "Verification passed, but writing the Codex configuration failed. Follow the notice above and try again.",
   "核验通过，正在保存并设为当前供应商…": "Verification passed. Saving and activating the provider…",

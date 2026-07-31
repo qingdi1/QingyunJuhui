@@ -60,6 +60,16 @@ describe("Qingyun quick provider", () => {
     assert.equal(merged.modelList, "gpt-5.6[1M]\ngpt-5.5");
   });
 
+  it("replaces a retired existing model with the preferred gateway model", () => {
+    const merged = mergeQingyunFetchedModels(
+      profile({ model: "gpt-4o", testModel: "gpt-4o" }),
+      ["gpt-4o", "gpt-5.5"],
+    );
+
+    assert.equal(merged.model, "gpt-5.5");
+    assert.equal(merged.testModel, "gpt-5.5");
+  });
+
   it("drops retired models while retaining metadata for models still upstream", () => {
     const merged = mergeQingyunFetchedModels(
       profile({ modelList: "retired-model[128K]\ngpt-5.6[1M]" }),

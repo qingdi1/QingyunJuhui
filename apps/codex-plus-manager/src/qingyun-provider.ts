@@ -31,13 +31,16 @@ export function findQingyunProfile<T extends QingyunProfileFields>(profiles: T[]
     ?? null;
 }
 
-export function qingyunProfilePatch(apiKey: string): Partial<QingyunProfileFields> {
+export function qingyunProfilePatch(
+  apiKey: string,
+  protocol: QingyunProfileFields["protocol"] = "responses",
+): Partial<QingyunProfileFields> {
   return {
     name: QINGYUN_PROFILE_NAME,
     baseUrl: QINGYUN_BASE_URL,
     upstreamBaseUrl: QINGYUN_BASE_URL,
     apiKey: apiKey.trim(),
-    protocol: "responses",
+    protocol,
     relayMode: "pureApi",
     officialMixApiKey: false,
   };
@@ -56,9 +59,11 @@ export function mergeQingyunFetchedModels<T extends QingyunProfileFields>(profil
     .map((model) => existingBySlug.get(modelSlug(model)) ?? model)
     .join("\n");
   const currentModel = modelSlug(profile.model);
-  const selectedModel = fetched.includes(currentModel)
-    ? currentModel
-    : fetched.find((model) => model === "gpt-5.5") ?? fetched[0];
+  // Prefer models known to be enabled by the Qingyun gateway. An older profile
+  // may still contain a retired model which would make the first doctor check
+  // fail even though the key and endpoint are valid.
+  const selectedModel = ["gpt-5.5", "codex-auto-review"].find((model) => fetched.includes(model))
+    ?? (fetched.includes(currentModel) ? currentModel : fetched[0]);
 
   return {
     ...profile,

@@ -2138,9 +2138,9 @@ export function App() {
     if (result) showNotice(t("供应商测试"), result.message, result.status);
   };
 
-  const diagnoseRelayProfile = async (profile: RelayProfile) => {
+  const diagnoseRelayProfile = async (profile: RelayProfile, options?: { silent?: boolean }) => {
     const result = await run(() => call<ProviderDoctorResult>("diagnose_relay_profile", { profile }));
-    if (result) showNotice("Provider Doctor", result.message, result.status);
+    if (result && !options?.silent) showNotice("Provider Doctor", result.message, result.status);
     return result ?? null;
   };
 
@@ -2977,7 +2977,10 @@ type Actions = {
   deleteContextEntry: (settings: BackendSettings, kind: ContextKind, id: string) => Promise<BackendSettings | null>;
   extractRelayCommonConfig: (configContents: string) => Promise<ExtractRelayCommonConfigResult | null>;
   testRelayProfile: (profile: RelayProfile) => Promise<void>;
-  diagnoseRelayProfile: (profile: RelayProfile) => Promise<ProviderDoctorResult | null>;
+  diagnoseRelayProfile: (
+    profile: RelayProfile,
+    options?: { silent?: boolean },
+  ) => Promise<ProviderDoctorResult | null>;
   testStepwiseSettings: (settings: BackendSettings) => Promise<void>;
   fetchRelayProfileModels: (profile: RelayProfile) => Promise<string[] | null>;
   switchRelayProfile: (settings: BackendSettings, previousActiveRelayId?: string) => Promise<boolean>;
@@ -3351,6 +3354,18 @@ function RelayScreen({
 
 type QingyunSetupPhase = "idle" | "models" | "diagnosing" | "switching" | "success" | "failed";
 
+function providerDoctorPassed(result: ProviderDoctorResult | null): boolean {
+  return Boolean(
+    result
+      && isSuccessStatus(result.status)
+      && !result.checks.some((check) => check.status === "failed"),
+  );
+}
+
+function providerDoctorRequestFailed(result: ProviderDoctorResult | null): boolean {
+  return Boolean(result?.checks.some((check) => check.id === "request" && check.status === "failed"));
+}
+
 function QingyunQuickSetup({
   form,
   actions,
@@ -3418,9 +3433,23 @@ function QingyunQuickSetup({
         phase: "diagnosing",
         message: tf("已获取 {0} 个模型，正在执行真实请求核验…", [models.length]),
       });
-      const diagnosis = await actions.diagnoseRelayProfile(candidate);
+      let diagnosis = await actions.diagnoseRelayProfile(candidate, { silent: true });
+      if (!providerDoctorPassed(diagnosis) && providerDoctorRequestFailed(diagnosis)) {
+        setSetupState({
+          phase: "diagnosing",
+          message: t("Responses API 核验失败，正在自动尝试 Chat Completions…"),
+        });
+        const chatCandidate = applyRelayProfilePatchToFiles(candidate, { protocol: "chatCompletions" });
+        const chatDiagnosis = await actions.diagnoseRelayProfile(chatCandidate, { silent: true });
+        if (providerDoctorPassed(chatDiagnosis)) {
+          candidate = chatCandidate;
+          diagnosis = chatDiagnosis;
+        } else if (chatDiagnosis) {
+          diagnosis = chatDiagnosis;
+        }
+      }
       const failedCheck = diagnosis?.checks.find((check) => check.status === "failed");
-      if (!diagnosis || !isSuccessStatus(diagnosis.status) || failedCheck) {
+      if (!diagnosis || !providerDoctorPassed(diagnosis)) {
         setSetupState({
           phase: "failed",
           message: diagnosis
@@ -8194,7 +8223,7 @@ function enforceManagedQingyunProfile(profile: RelayProfile): RelayProfile {
   return applyRelayProfilePatchToFiles(
     profile,
     {
-      ...qingyunProfilePatch(profile.apiKey),
+      ...qingyunProfilePatch(profile.apiKey, profile.protocol),
       name: profile.name || t("青云聚汇"),
     } as Partial<RelayProfile>,
     { allowGenerateFiles: true },
