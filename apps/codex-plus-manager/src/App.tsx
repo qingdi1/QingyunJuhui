@@ -3194,7 +3194,7 @@ function WindowTitlebar() {
   const closeLabel = t("关闭窗口");
 
   return (
-    <div className="window-titlebar" data-tauri-drag-region>
+    <div className="window-titlebar">
       <div className="window-titlebar-copy" data-tauri-drag-region>
         <span aria-hidden="true" className="window-title-mark">青</span>
         <span className="window-title">{t("青云聚汇 · 云台")}</span>
