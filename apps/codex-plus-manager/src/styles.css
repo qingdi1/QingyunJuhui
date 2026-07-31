@@ -5724,14 +5724,41 @@ body {
 }
 
 .topbar {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
   border-color: hsl(var(--rim) / 0.7);
   border-radius: 0 0 20px 20px;
-  background: hsl(var(--card) / 0.58);
+  background: hsl(var(--card) / 0.42);
   backdrop-filter: blur(60px) saturate(1.2);
   box-shadow:
     inset 0 -1px 0 hsl(var(--ink-shadow) / 0.12),
     inset 0 1px 0 hsl(var(--rim) / 0.7),
     4px 6px 12px hsl(var(--ink-shadow) / 0.1);
+}
+
+.topbar > .topbar-art {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  background:
+    linear-gradient(90deg, hsl(var(--card) / 0.46), hsl(var(--card) / 0.66)),
+    url("./assets/ink-mountains.svg") center bottom / cover no-repeat,
+    url("./assets/qingyun-parchment-master.png") 58% 46% / cover no-repeat;
+  background-blend-mode: normal, normal, normal;
+  filter: saturate(0.72) contrast(0.92);
+  opacity: 0.74;
+  pointer-events: none;
+}
+
+.topbar > :not(.topbar-art) {
+  position: relative;
+  z-index: 1;
+}
+
+.dark .topbar > .topbar-art {
+  filter: brightness(0.58) saturate(0.68) contrast(1.02);
+  opacity: 0.68;
 }
 
 .topbar h1 {

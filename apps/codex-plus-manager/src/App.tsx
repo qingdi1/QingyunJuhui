@@ -2686,6 +2686,7 @@ export function App() {
       <main className="workspace">
         <InkCursorTrail theme={theme} />
         <header className="topbar" key={`topbar-${route}`}>
+          <div aria-hidden="true" className="topbar-art" />
           <div className="topbar-copy">
             <h1>{routeTitle(route)}</h1>
             <p>{routeSubtitle(route)}</p>
