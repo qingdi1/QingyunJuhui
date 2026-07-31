@@ -15,6 +15,7 @@
         "create": false,
         "label": "main",
         "title": "青云聚汇 · 云台",
+        "decorations": false,
         "width": 1180,
         "height": 820,
         "minWidth": 960,

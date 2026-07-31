@@ -16,6 +16,7 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 import { convertFileSrc, invoke } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
+import { getCurrentWindow } from "@tauri-apps/api/window";
 import { open, save as saveDialog } from "@tauri-apps/plugin-dialog";
 import {
   ArrowLeft,
@@ -41,7 +42,9 @@ import {
   Palette,
   Play,
   MessageCircle,
+  Minus,
   MoreHorizontal,
+  Maximize2,
   FileCode2,
   Moon,
   Network,
@@ -62,6 +65,7 @@ import {
   TestTube,
   Trash2,
   Wrench,
+  X,
   type LucideIcon,
 } from "lucide-react";
 import { ProviderPresetSelector } from "@/components/ProviderPresetSelector";
@@ -2636,6 +2640,7 @@ export function App() {
 
   return (
     <div className={`shell ${theme}`}>
+      <WindowTitlebar />
       <aside className="sidebar">
         <div aria-hidden="true" className="sidebar-art" />
         <div className="brand">
@@ -3179,6 +3184,51 @@ function RelayEnvironmentScreen({ result, actions }: { result: RelayEnvironmentR
         </Toolbar>
       </CardContent>
     </Panel>
+  );
+}
+
+function WindowTitlebar() {
+  const appWindow = useMemo(() => getCurrentWindow(), []);
+  const minimizeLabel = t("最小化窗口");
+  const maximizeLabel = t("最大化窗口");
+  const closeLabel = t("关闭窗口");
+
+  return (
+    <div className="window-titlebar" data-tauri-drag-region>
+      <div className="window-titlebar-copy" data-tauri-drag-region>
+        <span aria-hidden="true" className="window-title-mark">青</span>
+        <span className="window-title">{t("青云聚汇 · 云台")}</span>
+      </div>
+      <div className="window-titlebar-controls">
+        <button
+          aria-label={minimizeLabel}
+          className="window-titlebar-button"
+          onClick={() => void appWindow.minimize()}
+          title={minimizeLabel}
+          type="button"
+        >
+          <Minus aria-hidden="true" className="h-4 w-4" />
+        </button>
+        <button
+          aria-label={maximizeLabel}
+          className="window-titlebar-button"
+          onClick={() => void appWindow.toggleMaximize()}
+          title={maximizeLabel}
+          type="button"
+        >
+          <Maximize2 aria-hidden="true" className="h-3.5 w-3.5" />
+        </button>
+        <button
+          aria-label={closeLabel}
+          className="window-titlebar-button window-titlebar-close"
+          onClick={() => void appWindow.close()}
+          title={closeLabel}
+          type="button"
+        >
+          <X aria-hidden="true" className="h-4 w-4" />
+        </button>
+      </div>
+    </div>
   );
 }
 
