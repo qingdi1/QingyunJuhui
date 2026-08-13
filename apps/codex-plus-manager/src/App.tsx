@@ -2734,11 +2734,11 @@ export function App() {
                aria-label={restartActionLabel}
                className="topbar-action topbar-action-restart"
                onClick={() => void actions.restart()}
-               size="icon"
                title={restartActionLabel}
                variant="outline"
              >
                <RotateCcw aria-hidden="true" className="h-4 w-4" />
+               <span>{restartActionLabel}</span>
              </Button>
           </div>
         </header>
