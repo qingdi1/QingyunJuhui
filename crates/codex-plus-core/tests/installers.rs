@@ -20,8 +20,12 @@ fn windows_entrypoint_plan_contains_silent_and_manager_entrypoints() {
     assert_eq!(plan.launcher_path, "C:/Tools/qingyun-juhui.exe");
     assert_eq!(plan.manager_path, "C:/Tools/qingyun-juhui-manager.exe");
     assert_eq!(plan.silent_icon_path, "C:/Tools/qingyun-juhui.exe");
-    assert_eq!(plan.manager_icon_path, "C:/Tools/qingyun-juhui-manager.exe");
+    assert_eq!(
+        plan.manager_icon_path,
+        "C:/Tools/qingyun-juhui-manager.exe"
+    );
     assert_eq!(plan.uninstall_key, "QingyunJuhui");
+    assert_eq!(plan.legacy_uninstall_key, "Codex++");
     assert_eq!(
         plan.uninstaller_path.replace('\\', "/"),
         "C:/Tools/uninstall.exe"
@@ -36,7 +40,7 @@ fn windows_entrypoint_plan_contains_silent_and_manager_entrypoints() {
     );
     assert_ne!(
         plan.uninstall_command,
-        "\"C:/Tools/qingyun-juhui-manager.exe\""
+        "\"C:/Tools/codex-plus-plus-manager.exe\""
     );
 }
 
@@ -76,13 +80,23 @@ fn macos_bundle_metadata_contains_silent_and_manager_apps() {
             .info_plist
             .contains("<string>青云聚汇管理工具</string>")
     );
-    assert_eq!(silent.binary_target_name.as_deref(), Some("qingyun-juhui"));
+    assert!(manager.info_plist.contains("<string>dreamskin</string>"));
+    assert!(manager.info_plist.contains("<string>codexplusplus</string>"));
+    assert!(!silent.info_plist.contains("<string>dreamskin</string>"));
+    assert_eq!(
+        silent.binary_target_name.as_deref(),
+        Some("qingyun-juhui")
+    );
     assert_eq!(
         manager.binary_target_name.as_deref(),
         Some("qingyun-juhui-manager")
     );
     assert!(silent.launch_script.contains("$DIR/qingyun-juhui"));
-    assert!(manager.launch_script.contains("$DIR/qingyun-juhui-manager"));
+    assert!(
+        manager
+            .launch_script
+            .contains("$DIR/qingyun-juhui-manager")
+    );
 }
 
 #[test]
@@ -113,7 +127,9 @@ fn companion_binary_path_resolves_macos_silent_app_next_to_manager_app() {
     );
     assert_ne!(
         companion,
-        std::path::PathBuf::from("/Applications/青云聚汇管理工具.app/Contents/MacOS/qingyun-juhui")
+        std::path::PathBuf::from(
+            "/Applications/青云聚汇管理工具.app/Contents/MacOS/qingyun-juhui"
+        )
     );
 }
 
@@ -191,7 +207,11 @@ fn macos_bundle_does_not_wrap_the_bundle_executable_in_itself() {
         ))
     );
     assert!(silent.launch_script.contains("$DIR/qingyun-juhui"));
-    assert!(manager.launch_script.contains("$DIR/qingyun-juhui-manager"));
+    assert!(
+        manager
+            .launch_script
+            .contains("$DIR/qingyun-juhui-manager")
+    );
 }
 
 #[test]

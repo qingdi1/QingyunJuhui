@@ -4,7 +4,10 @@ import {
   QINGYUN_BASE_URL,
   QINGYUN_PROFILE_ID,
   findQingyunProfile,
+  findQingyunProfileForKey,
   mergeQingyunFetchedModels,
+  pruneQingyunWindowMaps,
+  qingyunProfileIdForKey,
   qingyunProfilePatch,
   upsertQingyunProfile,
   type QingyunProfileFields,
@@ -22,6 +25,8 @@ const profile = (patch: Partial<QingyunProfileFields> = {}): QingyunProfileField
   officialMixApiKey: false,
   testModel: "",
   modelList: "",
+  modelWindows: "",
+  modelVlm: "",
   ...patch,
 });
 
@@ -87,5 +92,54 @@ describe("Qingyun quick provider", () => {
     const result = upsertQingyunProfile([other, oldQingyun, secondQingyun], nextQingyun);
 
     assert.deepStrictEqual(result, [nextQingyun, other, secondQingyun]);
+  });
+
+  it("derives a stable profile id from the key without exposing it", () => {
+    const idA = qingyunProfileIdForKey("  sk-key-a  ");
+    const idB = qingyunProfileIdForKey("sk-key-a");
+    const idC = qingyunProfileIdForKey("sk-key-b");
+
+    assert.equal(idA, idB);
+    assert.notEqual(idA, idC);
+    assert.ok(idA.startsWith("qingyun-juhui-"));
+    assert.ok(!idA.includes("sk-key"));
+    assert.equal(idA.length, "qingyun-juhui-".length + 16);
+  });
+
+  it("finds the Qingyun profile for a key by derived id or legacy fixed id", () => {
+    const key = "sk-key-a";
+    const derived = profile({ id: qingyunProfileIdForKey(key), apiKey: key });
+    const legacy = profile({ apiKey: key });
+
+    assert.equal(findQingyunProfileForKey([profile({ id: "other" }), derived], key), derived);
+    assert.equal(findQingyunProfileForKey([profile({ id: "other" }), legacy], key), legacy);
+    assert.equal(findQingyunProfileForKey([derived, legacy], key), derived);
+    assert.equal(findQingyunProfileForKey([derived], "sk-other-key"), null);
+  });
+
+  it("keeps different-key Qingyun cards and migrates the legacy fixed-id card for the same key", () => {
+    const legacy = profile({ id: QINGYUN_PROFILE_ID, apiKey: "sk-key-a" });
+    const nextA = profile({ id: qingyunProfileIdForKey("sk-key-a"), apiKey: "sk-key-a" });
+    const nextB = profile({ id: qingyunProfileIdForKey("sk-key-b"), apiKey: "sk-key-b" });
+
+    const withA = upsertQingyunProfile([legacy], nextA);
+    assert.deepStrictEqual(withA, [nextA]);
+
+    const withAB = upsertQingyunProfile(withA, nextB);
+    assert.deepStrictEqual(withAB, [nextB, nextA]);
+  });
+
+  it("prunes model windows and vlm entries for models no longer in the list", () => {
+    const pruned = pruneQingyunWindowMaps(
+      profile({
+        modelList: "gpt-5.6\nretired-model",
+        modelWindows: JSON.stringify({ "gpt-5.6": "1M", "retired-model": "128K" }),
+        modelVlm: JSON.stringify({ "gpt-5.6": "vlm", "retired-model": "strip" }),
+      }),
+      "gpt-5.6",
+    );
+
+    assert.equal(pruned.modelWindows, JSON.stringify({ "gpt-5.6": "1M" }));
+    assert.equal(pruned.modelVlm, JSON.stringify({ "gpt-5.6": "vlm" }));
   });
 });

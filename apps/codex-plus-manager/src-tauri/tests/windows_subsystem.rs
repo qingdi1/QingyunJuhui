@@ -62,6 +62,8 @@ fn manager_close_minimizes_to_tray_without_confirmation() {
     assert!(!lib_rs.contains(".dialog()"));
     assert!(!lib_rs.contains("manager://close-requested"));
     assert!(lib_rs.contains("let _ = close_event_window.hide();"));
+    assert!(lib_rs.contains("startup_is_transient()"));
+    assert!(lib_rs.contains("arg == \"--transient\""));
     assert!(!app_tsx.contains("CloseConfirmDialog"));
     assert!(app_tsx.contains("manager_exit_app"));
     assert!(app_tsx.contains("manager_hide_to_tray"));
@@ -217,7 +219,7 @@ fn relay_settings_keeps_profile_config_and_auth_files_isolated() {
 
     assert!(app_tsx.contains("snapshotActiveRelayFilesBeforeSwitch"));
     assert!(app_tsx.contains("backfill_relay_profile_from_live"));
-    assert!(app_tsx.contains("relayProfileSwitchValidation(selectedBeforeSave)"));
+    assert!(app_tsx.contains("relayProfileSwitchValidation(selectedBeforeSave, switchSettings)"));
     assert!(app_tsx.contains("缺少独立 config.toml"));
     assert!(app_tsx.contains("const command = relayProfileSwitchCommand(selectedAfterSave)"));
     assert!(app_tsx.contains("function relayProfileSwitchCommand"));
@@ -261,6 +263,9 @@ fn relay_context_management_is_global_not_supplier_scoped() {
     assert!(app_tsx.contains("sync_live_context_entries"));
     assert!(app_tsx.contains("refreshLiveContextEntries"));
     assert!(app_tsx.contains("syncLiveContextEntries(next, true)"));
+    assert!(app_tsx.contains("const syncContextEntries = async (next: BackendSettings) =>"));
+    assert_eq!(app_tsx.matches("await syncContextEntries(next)").count(), 3);
+    assert!(app_tsx.contains("if (!(await syncContextEntries(next))) return;"));
     assert!(app_tsx.contains("function contextEntriesWithLiveEntries"));
     assert!(app_tsx.contains("liveByKind"));
     assert!(app_tsx.contains("mergeLiveContextEntries"));
@@ -326,7 +331,7 @@ fn provider_presets_include_runapi() {
     assert!(presets.contains("id: \"runapi\""));
     assert!(presets.contains("name: \"RunAPI\""));
     assert!(presets.contains("category: \"aggregator\""));
-    assert!(presets.contains("baseUrl: \"https://runapi.co/v1\""));
+    assert!(presets.contains("baseUrl: \"https://runapi.host/v1\""));
 }
 
 #[test]
@@ -364,4 +369,6 @@ fn manager_update_install_keeps_visible_progress_bar() {
     assert!(app_tsx.contains("安装包更新进度"));
     assert!(app_tsx.contains("completedTitle={t(\"上次更新结果\")}"));
     assert!(app_tsx.contains("progress={updateInstallProgress}"));
+    assert!(app_tsx.contains("current.percent + 0.2"));
+    assert!(app_tsx.contains("下载或启动耗时较长"));
 }
