@@ -184,7 +184,8 @@ pub async fn fetch_latest_release(latest_json_url: &str) -> anyhow::Result<Relea
 
 pub async fn check_for_update(current_version: &str) -> anyhow::Result<UpdateCheck> {
     let release = fetch_latest_release(DEFAULT_LATEST_JSON_URL).await?;
-    let update_available = is_newer_version(&release.version, current_version)?;
+    let update_available =
+        release.asset_url.is_some() && is_newer_version(&release.version, current_version)?;
     Ok(UpdateCheck {
         current_version: current_version.to_string(),
         latest_version: Some(release.version),
@@ -392,9 +393,8 @@ fn is_macos_native_arch_asset(name: &str) -> bool {
 }
 
 fn is_windows_installer_asset(name: &str) -> bool {
-    let is_qingyun = name.contains("qingyun") && name.contains("juhui");
-    let is_codex_plus = name.contains("codex") && name.contains("plus");
-    (is_qingyun || is_codex_plus)
+    name.contains("qingyun")
+        && name.contains("juhui")
         && (name.ends_with(".msi")
             || name.ends_with("-setup.exe")
             || name.ends_with("_setup.exe")
@@ -405,9 +405,7 @@ fn is_windows_installer_asset(name: &str) -> bool {
 fn is_macos_installer_asset(name: &str) -> bool {
     // Loose shape check; arch preference is handled by platform_asset_rank
     // via is_macos_native_arch_asset.
-    let is_qingyun = name.contains("qingyun") && name.contains("juhui");
-    let is_codex_plus = name.contains("codex") && name.contains("plus");
-    (is_qingyun || is_codex_plus) && name.ends_with(".dmg")
+    name.contains("qingyun") && name.contains("juhui") && name.ends_with(".dmg")
 }
 
 pub fn launch_installer(path: &Path) -> anyhow::Result<()> {

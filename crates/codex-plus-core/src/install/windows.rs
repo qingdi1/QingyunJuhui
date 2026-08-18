@@ -6,8 +6,6 @@ use super::{
 };
 
 const UNINSTALL_SUBKEY: &str = r"Software\Microsoft\Windows\CurrentVersion\Uninstall\QingyunJuhui";
-const LEGACY_UNINSTALL_SUBKEY: &str =
-    r"Software\Microsoft\Windows\CurrentVersion\Uninstall\Codex++";
 const URL_PROTOCOL_SUBKEY: &str = r"Software\Classes\qingyunjuhui";
 const DREAM_SKIN_URL_PROTOCOL_SUBKEY: &str = r"Software\Classes\dreamskin";
 
@@ -25,7 +23,6 @@ pub struct WindowsEntrypointPlan {
     pub uninstall_command: String,
     pub quiet_uninstall_command: String,
     pub uninstall_key: String,
-    pub legacy_uninstall_key: String,
     pub remove_owned_data: bool,
 }
 
@@ -60,7 +57,6 @@ pub fn build_windows_entrypoint_plan(options: &InstallOptions) -> WindowsEntrypo
         uninstall_command,
         quiet_uninstall_command,
         uninstall_key: "QingyunJuhui".to_string(),
-        legacy_uninstall_key: "Codex++".to_string(),
         remove_owned_data: options.remove_owned_data,
     }
 }
@@ -102,17 +98,6 @@ pub fn uninstall_shortcuts(options: &InstallOptions) -> anyhow::Result<()> {
         r"{URL_PROTOCOL_SUBKEY}\shell"
     ));
     let _ = crate::windows_integration::delete_current_user_key(URL_PROTOCOL_SUBKEY);
-    let _ = crate::windows_integration::delete_current_user_key(&format!(
-        r"{DREAM_SKIN_URL_PROTOCOL_SUBKEY}\shell\open\command"
-    ));
-    let _ = crate::windows_integration::delete_current_user_key(&format!(
-        r"{DREAM_SKIN_URL_PROTOCOL_SUBKEY}\shell\open"
-    ));
-    let _ = crate::windows_integration::delete_current_user_key(&format!(
-        r"{DREAM_SKIN_URL_PROTOCOL_SUBKEY}\shell"
-    ));
-    let _ = crate::windows_integration::delete_current_user_key(DREAM_SKIN_URL_PROTOCOL_SUBKEY);
-    let _ = crate::windows_integration::delete_current_user_key(LEGACY_UNINSTALL_SUBKEY);
     let _ = crate::windows_integration::delete_current_user_key(UNINSTALL_SUBKEY);
     Ok(())
 }
@@ -147,7 +132,6 @@ fn create_entrypoint_shortcut(
 
 #[cfg(windows)]
 fn write_uninstall_registration(plan: &WindowsEntrypointPlan) -> anyhow::Result<()> {
-    let _ = crate::windows_integration::delete_current_user_key(LEGACY_UNINSTALL_SUBKEY);
     let install_location = Path::new(&plan.manager_path)
         .parent()
         .map(Path::to_path_buf)
@@ -172,8 +156,8 @@ fn write_uninstall_registration(plan: &WindowsEntrypointPlan) -> anyhow::Result<
 fn register_url_protocol(manager_path: &str) -> anyhow::Result<()> {
     register_url_protocol_key(
         URL_PROTOCOL_SUBKEY,
+        "",
         "URL:Qingyun Juhui Import Protocol",
-        manager_path,
     )?;
     register_url_protocol_key(
         DREAM_SKIN_URL_PROTOCOL_SUBKEY,
@@ -202,8 +186,8 @@ fn default_icon_path() -> PathBuf {
     std::env::current_exe()
         .ok()
         .and_then(|path| path.parent().map(Path::to_path_buf))
-        .map(|path| path.join("qingyun-juhui.ico"))
-        .unwrap_or_else(|| PathBuf::from("qingyun-juhui.ico"))
+        .map(|path| path.join("codex-plus-plus.ico"))
+        .unwrap_or_else(|| PathBuf::from("codex-plus-plus.ico"))
 }
 
 #[allow(dead_code)]

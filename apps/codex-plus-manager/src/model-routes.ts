@@ -22,7 +22,7 @@ export type RelayModelRouteSettings = {
   relayProfiles: RelayModelRouteProfile[];
 };
 
-export const PROTOCOL_PROXY_BASE_URL = "http://127.0.0.1:57321/v1";
+export const PROTOCOL_PROXY_BASE_URL = "http://127.0.0.1:58321/v1";
 
 export type RelayModelRouteIssue = {
   kind: "incomplete" | "duplicate" | "self" | "missingTarget" | "aggregateTarget" | "targetProtocol" | "targetCredentials";
