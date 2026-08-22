@@ -31,6 +31,10 @@ export const EN_PLAIN: Record<string, string> = {
   "Codex CLI 路径": "Codex CLI path",
   "青云聚汇官方中转站，主打稳定接入和划算价格，支持 GPT-5.6 全系列、Fable 5、Sonnet 5、GPT-5.5、GPT-5.4、Claude Opus 4.8、Claude Opus 4.7、gpt-image-2 等模型与图像能力。":
     "Qingyun Juhui provides a stable, competitively priced API relay supporting the full GPT-5.6 family, Fable 5, Sonnet 5, GPT-5.5, GPT-5.4, Claude Opus 4.8, Claude Opus 4.7, gpt-image-2 and other models plus image capabilities.",
+  "最小化窗口": "Minimize window",
+  "最大化窗口": "Maximize window",
+  "关闭窗口": "Close window",
+  "青云聚汇 · 云台": "Qingyun Juhui · Hub",
   "青云聚汇导入": "Qingyun Juhui import",
   "青云聚汇版本": "Qingyun Juhui version",
   "Codex-Dream-Skin 风格主题和换图": "Codex-Dream-Skin style themes and image replacement",

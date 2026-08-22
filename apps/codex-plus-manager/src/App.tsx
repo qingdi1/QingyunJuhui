@@ -16,6 +16,7 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 import { convertFileSrc, invoke } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
+import { getCurrentWindow } from "@tauri-apps/api/window";
 import { open, save as saveDialog } from "@tauri-apps/plugin-dialog";
 import {
   ArrowLeft,
@@ -41,6 +42,8 @@ import {
   LayoutGrid,
   LayoutDashboard,
   List,
+  Maximize2,
+  Minus,
   Palette,
   Play,
   MessageCircle,
@@ -68,10 +71,12 @@ import {
   TestTube,
   Trash2,
   Wrench,
+  X,
   type LucideIcon,
 } from "lucide-react";
 import { ProviderPresetSelector } from "@/components/ProviderPresetSelector";
 import type { PresetPatch } from "@/components/ProviderPresetSelector";
+import { InkCursorTrail } from "@/components/InkCursorTrail";
 import { useEffect, useMemo, useRef, useState, type CSSProperties, type ReactNode } from "react";
 
 import { Badge as UiBadge } from "@/components/ui/badge";
@@ -952,6 +957,53 @@ const defaultSettings: BackendSettings = {
   activeAggregateRelayId: "",
   relayTestModel: "gpt-5.4-mini",
 };
+
+function WindowTitlebar() {
+  const appWindow = useMemo(() => getCurrentWindow(), []);
+  const minimizeLabel = t("最小化窗口");
+  const maximizeLabel = t("最大化窗口");
+  const closeLabel = t("关闭窗口");
+
+  return (
+    <div className="window-titlebar" data-tauri-drag-region="deep">
+      <div className="window-titlebar-copy">
+        <span aria-hidden="true" className="window-title-mark">
+          青
+        </span>
+        <span className="window-title">{t("青云聚汇 · 云台")}</span>
+      </div>
+      <div className="window-titlebar-controls">
+        <button
+          aria-label={minimizeLabel}
+          className="window-titlebar-button"
+          onClick={() => void appWindow.minimize()}
+          title={minimizeLabel}
+          type="button"
+        >
+          <Minus aria-hidden="true" className="h-4 w-4" />
+        </button>
+        <button
+          aria-label={maximizeLabel}
+          className="window-titlebar-button"
+          onClick={() => void appWindow.toggleMaximize()}
+          title={maximizeLabel}
+          type="button"
+        >
+          <Maximize2 aria-hidden="true" className="h-3.5 w-3.5" />
+        </button>
+        <button
+          aria-label={closeLabel}
+          className="window-titlebar-button window-titlebar-close"
+          onClick={() => void appWindow.close()}
+          title={closeLabel}
+          type="button"
+        >
+          <X aria-hidden="true" className="h-4 w-4" />
+        </button>
+      </div>
+    </div>
+  );
+}
 
 export function App() {
   const [theme, setTheme] = useState<Theme>(() => loadInitialTheme());
@@ -3030,7 +3082,9 @@ export function App() {
 
   return (
     <div className={`shell ${theme}`}>
+      <WindowTitlebar />
       <aside className="sidebar">
+        <div aria-hidden="true" className="sidebar-art" />
         <div className="brand">
           <div className="brand-copy">
             <div className="brand-title-row">
@@ -3081,6 +3135,7 @@ export function App() {
         </nav>
       </aside>
       <main className="workspace">
+        <InkCursorTrail theme={theme} />
         <header className="topbar" key={`topbar-${route}`}>
           <div>
             <h1>{routeTitle(route)}</h1>
