@@ -7376,8 +7376,8 @@ select,
   backdrop-filter: blur(12px);
 }
 
-/* Feature toggles contain a checkbox, copy, and visual switch. Keep all three
-   in explicit columns so the enhancement controls cannot overflow implicitly. */
+/* Feature toggles contain a hidden checkbox, copy, and visual switch. Keep the
+   visible copy and switch in explicit columns so controls cannot overflow. */
 .enhance-content,
 .enhance-control-deck,
 .enhance-feature-groups,
@@ -7387,15 +7387,8 @@ select,
 }
 
 .feature-toggle {
-  grid-template-columns: 18px minmax(0, 1fr) auto;
+  grid-template-columns: minmax(0, 1fr) auto;
   min-width: 0;
-}
-
-.feature-toggle > input {
-  width: 16px;
-  height: 16px;
-  min-width: 16px;
-  margin: 0;
 }
 
 .feature-toggle > span:not(.toggle-switch-visual) {
