@@ -7376,6 +7376,57 @@ select,
   backdrop-filter: blur(12px);
 }
 
+/* Feature toggles contain a checkbox, copy, and visual switch. Keep all three
+   in explicit columns so the enhancement controls cannot overflow implicitly. */
+.enhance-content,
+.enhance-control-deck,
+.enhance-feature-groups,
+.feature-group,
+.feature-switch-grid {
+  min-width: 0;
+}
+
+.feature-toggle {
+  grid-template-columns: 18px minmax(0, 1fr) auto;
+  min-width: 0;
+}
+
+.feature-toggle > input {
+  width: 16px;
+  height: 16px;
+  min-width: 16px;
+  margin: 0;
+}
+
+.feature-toggle > span:not(.toggle-switch-visual) {
+  min-width: 0;
+}
+
+.feature-toggle > span:not(.toggle-switch-visual) small {
+  overflow-wrap: anywhere;
+}
+
+.feature-action-row > * {
+  min-width: 0;
+}
+
+@media (max-width: 760px) {
+  .enhance-control-deck,
+  .feature-switch-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .feature-action-row {
+    grid-template-columns: minmax(0, 1fr);
+    align-items: start;
+  }
+
+  .feature-action-row button,
+  .feature-action-row .feature-action-status {
+    width: fit-content;
+  }
+}
+
 /* Keep the titlebar grid deterministic when the window is resized. */
 .shell {
   grid-template-columns: minmax(0, 300px) minmax(0, 1fr);
