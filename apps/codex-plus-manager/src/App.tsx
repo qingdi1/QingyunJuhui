@@ -7455,6 +7455,7 @@ function RelayProfileEditor({
                 <span>{t("模型名称")}</span>
                 <span>{t("上下文窗口")}</span>
                 <span>{t("图片处理方式")}</span>
+                <span aria-hidden="true" />
               </div>
               {modelWindowRows.map((row, index) => (
                 <div className="relay-model-row" key={index}>
@@ -7523,6 +7524,7 @@ function RelayProfileEditor({
                   <span>{t("匹配模型")}</span>
                   <span>{t("目标供应商")}</span>
                   <span>{t("目标模型（可选）")}</span>
+                  <span aria-hidden="true" />
                 </div>
               ) : null}
               {modelRoutes.map((route, index) => (

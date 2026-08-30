@@ -3486,9 +3486,13 @@ body {
 
 .relay-model-row {
   display: grid;
-  grid-template-columns: minmax(220px, 1fr) minmax(120px, 180px) 36px;
+  grid-template-columns: minmax(0, 1fr) minmax(110px, 0.72fr) minmax(150px, 0.9fr) 36px;
   align-items: center;
   gap: 8px;
+}
+
+.relay-model-row > * {
+  min-width: 0;
 }
 
 .relay-model-row-head {
@@ -7066,6 +7070,10 @@ select,
   grid-template-columns: minmax(180px, 1fr) minmax(180px, 1fr) minmax(170px, 1fr) 36px;
   align-items: center;
   gap: 8px;
+}
+
+.relay-model-route-row > * {
+  min-width: 0;
 }
 
 
