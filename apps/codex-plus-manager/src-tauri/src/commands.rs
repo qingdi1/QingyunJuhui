@@ -5615,7 +5615,11 @@ mod tests {
         sync_active_relay_to_home(&routed_pure_api_settings(), temp.path()).unwrap();
 
         let config = std::fs::read_to_string(temp.path().join("config.toml")).unwrap();
-        assert!(config.contains(r#"base_url = "http://127.0.0.1:57321/v1""#));
+        let expected_proxy =
+            codex_plus_core::protocol_proxy::local_responses_proxy_base_url(
+                codex_plus_core::protocol_proxy::DEFAULT_PROTOCOL_PROXY_PORT,
+            );
+        assert!(config.contains(&format!(r#"base_url = "{expected_proxy}""#)));
         assert!(!config.contains(r#"base_url = "https://source.example/v1""#));
     }
 
@@ -5676,7 +5680,11 @@ mod tests {
         sync_active_relay_to_home(&settings, temp.path()).unwrap();
 
         let config = std::fs::read_to_string(temp.path().join("config.toml")).unwrap();
-        assert!(config.contains(r#"base_url = "http://127.0.0.1:57321/v1""#));
+        let expected_proxy =
+            codex_plus_core::protocol_proxy::local_responses_proxy_base_url(
+                codex_plus_core::protocol_proxy::DEFAULT_PROTOCOL_PROXY_PORT,
+            );
+        assert!(config.contains(&format!(r#"base_url = "{expected_proxy}""#)));
         assert!(config.contains(r#"experimental_bearer_token = "codex-plus-aggregate""#));
     }
 
