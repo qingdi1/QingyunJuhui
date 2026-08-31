@@ -470,6 +470,13 @@ impl LaunchHooks for LauncherHooks {
         self.core.apply_active_relay_profile(settings).await
     }
 
+    async fn ensure_computer_use_config(
+        &self,
+        settings: &codex_plus_core::settings::BackendSettings,
+    ) -> anyhow::Result<()> {
+        self.core.ensure_computer_use_config(settings).await
+    }
+
     async fn ensure_plugin_marketplace_config(
         &self,
         settings: &codex_plus_core::settings::BackendSettings,
@@ -538,6 +545,13 @@ impl LaunchHooks for LauncherHooks {
         self.core
             .start_bridge_watchdog(debug_port, helper_port)
             .await
+    }
+
+    async fn start_computer_use_guard_watchdog(
+        &self,
+        settings: &codex_plus_core::settings::BackendSettings,
+    ) -> anyhow::Result<()> {
+        self.core.start_computer_use_guard_watchdog(settings).await
     }
 
     async fn write_status(&self, status: &str) {
@@ -1075,7 +1089,7 @@ mod tests {
     }
 
     #[test]
-    fn launcher_hooks_forward_runtime_watchdog_and_marketplace_methods() {
+    fn launcher_hooks_forward_runtime_watchdogs_and_marketplace_methods() {
         let source = include_str!("main.rs");
 
         assert!(source.contains("async fn start_bridge_watchdog"));
@@ -1084,6 +1098,10 @@ mod tests {
         assert!(source.contains("inject_with_context(debug_port, helper_port, ctx, runtime)"));
         assert!(source.contains("async fn ensure_plugin_marketplace_config"));
         assert!(source.contains("self.core.ensure_plugin_marketplace_config(settings).await"));
+        assert!(source.contains("async fn ensure_computer_use_config"));
+        assert!(source.contains("self.core.ensure_computer_use_config(settings).await"));
+        assert!(source.contains("async fn start_computer_use_guard_watchdog"));
+        assert!(source.contains("self.core.start_computer_use_guard_watchdog(settings).await"));
     }
 
     #[tokio::test]

@@ -4393,7 +4393,7 @@ select {
     0 10px 26px hsl(var(--ink-shadow) / 0.09);
 }
 
-@media (max-width: 960px) {
+@media (max-width: 860px) {
   .shell {
     grid-template-columns: 68px minmax(0, 1fr);
   }
@@ -4427,6 +4427,24 @@ select {
     padding: 0;
   }
 
+  .enhance-panel .mode-grid,
+  .enhance-panel .feature-switch-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .enhance-panel .feature-action-row {
+    grid-template-columns: 1fr;
+    align-items: start;
+  }
+
+  .enhance-panel .feature-action-row .inline-flex,
+  .enhance-panel .feature-action-row button,
+  .enhance-panel .feature-action-status {
+    width: fit-content;
+  }
+}
+
+@media (min-width: 861px) and (max-width: 960px) {
   .enhance-panel .mode-grid,
   .enhance-panel .feature-switch-grid {
     grid-template-columns: 1fr;
@@ -7461,8 +7479,249 @@ select,
   min-width: 0;
 }
 
-@media (max-width: 960px) {
+@media (max-width: 860px) {
   .shell {
     grid-template-columns: 68px minmax(0, 1fr);
+  }
+}
+
+/* Qingyun cyan landscape: the generated ink-and-mist image is a shared
+   background layer; translucent teal washes keep controls and Chinese copy
+   readable without changing the established layout grid. */
+:root,
+.dark {
+  --background: 193 32% 10%;
+  --foreground: 46 30% 93%;
+  --card: 193 24% 15%;
+  --card-foreground: 46 30% 93%;
+  --popover: 193 25% 18%;
+  --popover-foreground: 46 30% 95%;
+  --primary: 181 53% 60%;
+  --primary-foreground: 193 32% 9%;
+  --secondary: 192 20% 22%;
+  --secondary-foreground: 46 25% 91%;
+  --muted: 191 17% 20%;
+  --muted-foreground: 188 16% 73%;
+  --accent: 179 37% 30%;
+  --accent-foreground: 46 28% 94%;
+  --border: 190 25% 32%;
+  --control-border: 184 39% 51%;
+  --input: 191 24% 36%;
+  --ring: 181 55% 60%;
+  --shell-bg: 194 32% 9%;
+  --sidebar-bg: 193 36% 8%;
+  --sidebar-muted: 190 27% 16%;
+  --sidebar-border: 181 31% 34%;
+  --sidebar-foreground: 45 30% 93%;
+  --sidebar-subtle: 187 18% 73%;
+  --sidebar-accent: 180 54% 62%;
+  --surface-raised: 193 24% 18%;
+  --surface-sunken: 194 30% 8%;
+  --brand-accent: 180 54% 52%;
+  --mineral-blue: 186 49% 38%;
+  --rim: 183 26% 56%;
+  --switch-track: 191 24% 30%;
+  --status-success: 169 52% 52%;
+  --parchment-edge: 190 26% 36%;
+  --paper-fiber: 184 18% 72%;
+  --cursor-ink-rgb: 74, 182, 172;
+}
+
+.light {
+  --background: 185 35% 91%;
+  --foreground: 194 35% 17%;
+  --card: 184 28% 95%;
+  --card-foreground: 194 35% 17%;
+  --popover: 184 34% 98%;
+  --popover-foreground: 194 35% 17%;
+  --primary: 181 59% 32%;
+  --primary-foreground: 184 34% 97%;
+  --secondary: 185 24% 84%;
+  --secondary-foreground: 194 33% 19%;
+  --muted: 185 22% 83%;
+  --muted-foreground: 192 22% 38%;
+  --accent: 180 43% 72%;
+  --accent-foreground: 190 34% 16%;
+  --border: 188 24% 56%;
+  --control-border: 184 32% 43%;
+  --input: 186 24% 50%;
+  --ring: 181 54% 34%;
+  --shell-bg: 186 31% 87%;
+  --sidebar-bg: 188 28% 87%;
+  --sidebar-muted: 187 25% 80%;
+  --sidebar-border: 183 32% 45%;
+  --sidebar-foreground: 194 34% 18%;
+  --sidebar-subtle: 191 22% 38%;
+  --sidebar-accent: 180 55% 34%;
+  --surface-raised: 184 28% 95%;
+  --surface-sunken: 184 26% 82%;
+  --brand-accent: 181 59% 32%;
+  --mineral-blue: 186 49% 42%;
+  --rim: 183 26% 42%;
+  --switch-track: 187 23% 61%;
+  --status-success: 169 52% 34%;
+  --parchment-edge: 188 26% 50%;
+  --paper-fiber: 184 20% 44%;
+  --cursor-ink-rgb: 36, 126, 123;
+}
+
+body {
+  background-color: hsl(var(--shell-bg));
+  background-image:
+    linear-gradient(135deg, hsl(var(--shell-bg) / 0.96), hsl(190 38% 12% / 0.9) 54%, hsl(var(--shell-bg) / 0.97)),
+    url("./assets/qingyun-cyan-mist.png");
+  background-position: center;
+  background-size: cover;
+}
+
+.shell {
+  background-color: hsl(var(--shell-bg));
+  background-image:
+    linear-gradient(135deg, hsl(var(--shell-bg) / 0.94), hsl(190 38% 12% / 0.86) 54%, hsl(var(--shell-bg) / 0.96)),
+    url("./assets/qingyun-cyan-mist.png");
+  background-position: center;
+  background-size: cover;
+}
+
+.light body,
+.light .shell {
+  background-image:
+    linear-gradient(135deg, hsl(var(--shell-bg) / 0.72), hsl(185 42% 90% / 0.58) 54%, hsl(var(--shell-bg) / 0.76)),
+    url("./assets/qingyun-cyan-mist.png");
+}
+
+.workspace::before {
+  background-image:
+    linear-gradient(145deg, hsl(193 46% 12% / 0.82), hsl(185 42% 13% / 0.58) 52%, hsl(176 36% 12% / 0.78)),
+    url("./assets/qingyun-cyan-mist.png");
+  background-position: center;
+  background-size: cover;
+  background-blend-mode: normal, normal;
+  filter: saturate(1.06) contrast(0.9);
+  opacity: 0.56;
+}
+
+.dark .workspace::before {
+  filter: brightness(0.56) saturate(1.12) contrast(0.92);
+  opacity: 0.5;
+}
+
+.light .workspace::before {
+  filter: saturate(0.86) contrast(0.96);
+  opacity: 0.54;
+}
+
+.sidebar,
+.light .sidebar,
+.dark .sidebar {
+  background-image:
+    linear-gradient(145deg, hsl(var(--sidebar-bg) / 0.86), hsl(var(--sidebar-muted) / 0.9)),
+    url("./assets/qingyun-cyan-mist.png");
+  background-position: center, 50% center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-blend-mode: normal, normal;
+}
+
+.sidebar > .sidebar-art {
+  background:
+    linear-gradient(180deg, hsl(190 42% 10% / 0.26), hsl(183 38% 12% / 0.62)),
+    url("./assets/qingyun-cyan-mist.png") center / cover no-repeat;
+  opacity: 0.46;
+}
+
+.dark .sidebar > .sidebar-art {
+  filter: brightness(0.54) saturate(1.1) contrast(1.04);
+  opacity: 0.52;
+}
+
+.light .sidebar > .sidebar-art {
+  filter: saturate(0.88) contrast(0.96);
+  opacity: 0.42;
+}
+
+.window-titlebar,
+.topbar > .topbar-art {
+  background-image:
+    linear-gradient(90deg, hsl(var(--card) / 0.62), hsl(184 42% 17% / 0.7)),
+    url("./assets/qingyun-cyan-mist.png");
+  background-position: center;
+  background-size: cover;
+  background-blend-mode: normal, normal;
+}
+
+.topbar > .topbar-art {
+  filter: saturate(1.08) contrast(0.94);
+  opacity: 0.68;
+}
+
+.dark .topbar > .topbar-art {
+  filter: brightness(0.58) saturate(1.14) contrast(0.98);
+  opacity: 0.62;
+}
+
+.light .window-titlebar,
+.light .topbar > .topbar-art {
+  background-image:
+    linear-gradient(90deg, hsl(var(--card) / 0.58), hsl(184 40% 86% / 0.66)),
+    url("./assets/qingyun-cyan-mist.png");
+}
+
+.light .topbar > .topbar-art {
+  filter: saturate(0.86) contrast(0.94);
+  opacity: 0.62;
+}
+
+.qingyun-quick-setup::before {
+  background-image: url("./assets/qingyun-cyan-mist.png");
+  background-position: 50% 44%;
+  filter: saturate(1.08) contrast(0.78);
+  opacity: 0.22;
+}
+
+.dark .qingyun-quick-setup::before {
+  filter: brightness(0.5) saturate(1.08) contrast(0.88);
+  opacity: 0.25;
+}
+
+.light .qingyun-quick-setup::before {
+  filter: saturate(0.82) contrast(0.9);
+  opacity: 0.18;
+}
+
+/* Keep the minimum desktop window readable: the 68px icon rail is reserved
+   for genuinely narrow viewports, while 761-960px still has room for labels. */
+@media (min-width: 761px) and (max-width: 960px) {
+  .shell {
+    grid-template-columns: minmax(0, 208px) minmax(0, 1fr);
+  }
+
+  .sidebar {
+    padding: 14px 10px;
+  }
+
+  .brand {
+    min-height: 0;
+    justify-content: flex-start;
+    padding: 8px 10px 22px;
+  }
+
+  .brand-copy,
+  .brand-subtitle,
+  .nav-label,
+  .nav-badge {
+    display: initial;
+  }
+
+  .nav-item {
+    grid-template-columns: 24px minmax(0, 1fr) auto;
+    justify-items: start;
+    gap: 8px;
+    padding: 0 9px;
+  }
+
+  .nav-section-label {
+    display: block;
+    white-space: nowrap;
   }
 }

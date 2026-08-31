@@ -732,16 +732,18 @@ fn sync_active_relay_to_home(
     {
         let auth_contents =
             (!relay.auth_contents.trim().is_empty()).then_some(relay.auth_contents.as_str());
-        return codex_plus_core::relay_config::clear_relay_config_to_home_with_auth(
+        return codex_plus_core::relay_config::clear_relay_config_to_home_with_auth_and_computer_use_guard(
             home,
             auth_contents,
+            settings.computer_use_guard_enabled,
         );
     }
     if relay_has_complete_files(&relay) {
-        return codex_plus_core::relay_config::apply_relay_profile_to_home_with_switch_rules(
+        return codex_plus_core::relay_config::apply_relay_profile_to_home_with_switch_rules_and_computer_use_guard(
             home,
             &relay,
             &relay_combined_common_config(settings),
+            settings.computer_use_guard_enabled,
         );
     }
 
@@ -4295,10 +4297,11 @@ pub fn apply_relay_injection() -> CommandResult<RelayPayload> {
         return response;
     }
     if relay_has_complete_files(&relay) {
-        return match codex_plus_core::relay_config::apply_relay_profile_to_home_with_switch_rules(
+        return match codex_plus_core::relay_config::apply_relay_profile_to_home_with_switch_rules_and_computer_use_guard(
             &home,
             &relay,
             &relay_combined_common_config(&settings),
+            settings.computer_use_guard_enabled,
         ) {
             Ok(result) => {
                 finish_codex_app_state_after_provider_switch(
@@ -4445,10 +4448,11 @@ pub fn apply_pure_api_injection() -> CommandResult<RelayPayload> {
     let relay = settings.active_relay_profile();
     log_relay_apply_request("manager.apply_pure_api_injection", &settings, &relay);
     if relay_has_complete_files(&relay) {
-        return match codex_plus_core::relay_config::apply_relay_profile_to_home_with_switch_rules(
+        return match codex_plus_core::relay_config::apply_relay_profile_to_home_with_switch_rules_and_computer_use_guard(
             &home,
             &relay,
             &relay_combined_common_config(&settings),
+            settings.computer_use_guard_enabled,
         ) {
             Ok(result) => {
                 finish_codex_app_state_after_provider_switch(
@@ -4557,8 +4561,11 @@ pub fn clear_relay_injection() -> CommandResult<RelayPayload> {
         && !relay.official_mix_api_key
         && !relay.auth_contents.trim().is_empty())
     .then_some(relay.auth_contents.as_str());
-    match codex_plus_core::relay_config::clear_relay_config_to_home_with_auth(&home, auth_contents)
-    {
+    match codex_plus_core::relay_config::clear_relay_config_to_home_with_auth_and_computer_use_guard(
+        &home,
+        auth_contents,
+        settings.computer_use_guard_enabled,
+    ) {
         Ok(result) => {
             finish_codex_app_state_after_provider_switch(
                 &home,

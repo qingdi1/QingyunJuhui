@@ -438,6 +438,9 @@ export const EN_PLAIN: Record<string, string> = {
   "启用": "Enable",
   "启用 Codex 图片覆盖层": "Enable Codex image overlay",
   "启用 Codex增强": "Enable Codex enhancements",
+  "启用 Windows Computer Use Guard": "Enable Windows Computer Use Guard",
+  "默认关闭；开启后启动 Codex 时会自动保留官方 Computer Use 插件所需的 config.toml、bundled 插件和 notify 配置。":
+    "Off by default; when enabled, preserves the config.toml, bundled plugins and notify configuration required by the official Computer Use plugin when Codex starts.",
   "启用供应商配置切换": "Enable provider configuration switching",
   "启用此扩展项": "Enable this entry",
   "启用目标功能": "Enable goals feature",

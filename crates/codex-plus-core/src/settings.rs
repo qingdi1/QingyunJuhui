@@ -372,6 +372,8 @@ pub struct BackendSettings {
     pub relay_profiles_enabled: bool,
     #[serde(rename = "enhancementsEnabled", default = "default_true")]
     pub enhancements_enabled: bool,
+    #[serde(rename = "computerUseGuardEnabled", default)]
+    pub computer_use_guard_enabled: bool,
     #[serde(rename = "codexAppPluginMarketplaceUnlock", default = "default_true")]
     pub codex_app_plugin_marketplace_unlock: bool,
     #[serde(rename = "codexAppModelWhitelistUnlock", default = "default_true")]
@@ -541,6 +543,7 @@ impl Default for BackendSettings {
             provider_sync_last_selected_provider: String::new(),
             relay_profiles_enabled: true,
             enhancements_enabled: true,
+            computer_use_guard_enabled: false,
             codex_app_plugin_marketplace_unlock: true,
             codex_app_model_whitelist_unlock: true,
             codex_app_session_delete: true,
@@ -1099,7 +1102,6 @@ impl SettingsStore {
 
 fn merge_known_setting_fields(target: &mut Map<String, Value>, source: &Map<String, Value>) {
     target.remove("codexAppPluginAutoExpand");
-    target.remove("computerUseGuardEnabled");
     if let Some(value) = source.get("codexAppPath").and_then(Value::as_str) {
         target.insert("codexAppPath".to_string(), Value::String(value.to_string()));
     }
@@ -1128,6 +1130,7 @@ fn merge_known_setting_fields(target: &mut Map<String, Value>, source: &Map<Stri
     if let Some(value) = source.get("enhancementsEnabled").and_then(Value::as_bool) {
         target.insert("enhancementsEnabled".to_string(), Value::Bool(value));
     }
+    merge_bool_setting(target, source, "computerUseGuardEnabled");
     merge_bool_setting(target, source, "codexAppPluginMarketplaceUnlock");
     merge_bool_setting(target, source, "codexAppModelWhitelistUnlock");
     merge_bool_setting(target, source, "codexAppSessionDelete");
@@ -1693,6 +1696,7 @@ mod tests {
         assert!(!settings.provider_sync_enabled);
         assert!(settings.relay_profiles_enabled);
         assert!(settings.enhancements_enabled);
+        assert!(!settings.computer_use_guard_enabled);
         assert!(settings.codex_app_plugin_marketplace_unlock);
         assert!(!settings.codex_app_thread_id_badge);
         assert!(settings.codex_app_force_chinese_locale);
@@ -2749,7 +2753,7 @@ experimental_bearer_token = "sk-existing""#
     }
 
     #[test]
-    fn settings_store_update_removes_obsolete_setting_fields() {
+    fn settings_store_update_removes_obsolete_fields_and_preserves_guard_setting() {
         let dir = temp_dir();
         let path = dir.join("settings.json");
         let store = SettingsStore::new(path.clone());
@@ -2767,7 +2771,7 @@ experimental_bearer_token = "sk-existing""#
         let saved: Value = serde_json::from_str(&std::fs::read_to_string(&path).unwrap()).unwrap();
 
         assert!(saved.get("codexAppPluginAutoExpand").is_none());
-        assert!(saved.get("computerUseGuardEnabled").is_none());
+        assert_eq!(saved["computerUseGuardEnabled"], json!(true));
         assert_eq!(saved["customField"], json!(1));
     }
 

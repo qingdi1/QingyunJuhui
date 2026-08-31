@@ -224,6 +224,7 @@ type BackendSettings = {
   providerSyncLastSelectedProvider: string;
   relayProfilesEnabled: boolean;
   enhancementsEnabled: boolean;
+  computerUseGuardEnabled: boolean;
   codexAppPluginMarketplaceUnlock: boolean;
   codexAppModelWhitelistUnlock: boolean;
   codexAppSessionDelete: boolean;
@@ -867,6 +868,7 @@ const defaultSettings: BackendSettings = {
   providerSyncLastSelectedProvider: "",
   relayProfilesEnabled: true,
   enhancementsEnabled: true,
+  computerUseGuardEnabled: false,
   codexAppPluginMarketplaceUnlock: true,
   codexAppModelWhitelistUnlock: true,
   codexAppSessionDelete: true,
@@ -4604,6 +4606,18 @@ function EnhanceScreen({
                   <span>
                     <strong>{t("启用 Codex增强")}</strong>
                     <small>{t("关闭后会停用删除、导出、插件相关和菜单位置增强。")}</small>
+                  </span>
+                  <ToggleVisual />
+                </label>
+                <label className="switch-row compact">
+                  <input
+                    checked={form.computerUseGuardEnabled}
+                    onChange={(event) => onFormChange({ ...form, computerUseGuardEnabled: event.currentTarget.checked })}
+                    type="checkbox"
+                  />
+                  <span>
+                    <strong>{t("启用 Windows Computer Use Guard")}</strong>
+                    <small>{t("默认关闭；开启后启动 Codex 时会自动保留官方 Computer Use 插件所需的 config.toml、bundled 插件和 notify 配置。")}</small>
                   </span>
                   <ToggleVisual />
                 </label>
@@ -9497,6 +9511,7 @@ function normalizeSettings(settings: BackendSettings): BackendSettings {
     ...defaultSettings,
     ...settings,
     relayProfilesEnabled: settings.relayProfilesEnabled !== false,
+    computerUseGuardEnabled: settings.computerUseGuardEnabled === true,
     codexAppImageOverlayOpacity: clampNumber(settings.codexAppImageOverlayOpacity || 35, 1, 100),
     codexAppImageOverlayFitMode: normalizeImageOverlayFitMode(settings.codexAppImageOverlayFitMode),
     codexAppDreamSkinPaused: settings.codexAppDreamSkinPaused === true,
