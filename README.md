@@ -33,13 +33,6 @@
 
 首次使用建议先打开管理工具，确认应用路径和运行状态，再配置供应商与增强功能，最后从 `青云聚汇` 入口启动。Windows 安装包会创建桌面和开始菜单快捷方式；macOS DMG 会安装 `/Applications/青云聚汇.app` 和 `/Applications/青云聚汇管理工具.app`。
 
-## 交流与支持
-
-欢迎加入 Codex++ 交流 3 群（QQ群：619480492），反馈问题、交流使用体验或提出新功能建议。<a href="https://qm.qq.com/q/Erf1F1zwqs">点击链接加入群聊</a>。
-
-Telegram 频道：<https://t.me/CodexPlusPlus>
-
-友情链接：<a href="https://linux.do">LINUX DO</a>
 
 ## 当前功能
 
